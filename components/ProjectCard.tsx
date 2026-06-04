@@ -3,11 +3,12 @@ import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
 import { ExternalLink, Github, Smartphone, Globe } from 'lucide-react';
 import type { Project } from '@/lib/types';
+import type { Dict } from '@/lib/locale';
 
 const PLAYSTORE_ICON = 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Google_Play_Store_badge_EN.svg/512px-Google_Play_Store_badge_EN.svg.png';
 const APPSTORE_ICON = 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Download_on_the_App_Store_Badge.svg/512px-Download_on_the_App_Store_Badge.svg.png';
 
-export default function ProjectCard({ project, t, index }: { project: Project; t: (k: any) => string; index: number }) {
+export default function ProjectCard({ project, dict, index }: { project: Project; dict: Dict; index: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.25 });
   const color = project.color || '#8b5cf6';
@@ -107,7 +108,7 @@ export default function ProjectCard({ project, t, index }: { project: Project; t
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition hover:scale-105"
                 style={{ background: color, color: '#0a0a14' }}
               >
-                <Globe size={16} /> {t('web')}
+                <Globe size={16} /> {dict.web}
               </a>
             )}
 

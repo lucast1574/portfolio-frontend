@@ -2,15 +2,14 @@
 import { motion } from 'framer-motion';
 import { Github, Linkedin, Youtube, Mail } from 'lucide-react';
 import type { SiteConfig } from '@/lib/types';
+import type { Dict } from '@/lib/locale';
 
-export default function Hero({ site, t }: { site: SiteConfig; t: (k: any) => string }) {
+export default function Hero({ site, dict }: { site: SiteConfig; dict: Dict }) {
   return (
     <section className="relative z-10 min-h-[100vh] flex items-center justify-center px-6 overflow-hidden">
-      {/* Planet glow */}
       <div className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-violet-600/30 via-fuchsia-500/10 to-transparent blur-3xl pointer-events-none" />
       <div className="absolute -bottom-40 -left-20 w-[500px] h-[500px] rounded-full bg-gradient-to-tr from-blue-500/20 via-cyan-400/5 to-transparent blur-3xl pointer-events-none" />
 
-      {/* Orbiting dots */}
       <div className="absolute right-12 top-1/2 hidden md:block">
         <div className="relative w-2 h-2">
           <span className="absolute w-2 h-2 rounded-full bg-violet-400 animate-orbit" />
@@ -92,7 +91,7 @@ export default function Hero({ site, t }: { site: SiteConfig; t: (k: any) => str
           transition={{ duration: 1, delay: 1.4 }}
           className="absolute left-1/2 -translate-x-1/2 bottom-8 text-xs text-slate-500 tracking-[0.3em]"
         >
-          <span className="block animate-float-med">↓ {t('scroll').toUpperCase()}</span>
+          <span className="block animate-float-med">↓ {dict.scroll.toUpperCase()}</span>
         </motion.div>
       </div>
     </section>

@@ -1,12 +1,16 @@
 import { GraphQLClient } from 'graphql-request';
 
-const endpoint =
-  process.env.NEXT_PUBLIC_API_URL ||
-  process.env.API_URL ||
-  'http://localhost:4000/graphql';
+// On the server (SSR/RSC), use the internal Docker hostname so we don't depend
+// on public DNS / TLS resolution from inside the container. On the browser,
+// always use the public URL.
+const isServer = typeof window === 'undefined';
+const publicEndpoint =
+  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/graphql';
+const serverEndpoint =
+  process.env.INTERNAL_API_URL || publicEndpoint;
 
 export const gql = (token?: string) =>
-  new GraphQLClient(endpoint, {
+  new GraphQLClient(isServer ? serverEndpoint : publicEndpoint, {
     credentials: 'include',
     headers: token ? { Authorization: `Bearer ${token}` } : undefined,
   });

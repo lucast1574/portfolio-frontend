@@ -16,7 +16,14 @@ export const t = (locale: 'es' | 'en', key: keyof typeof messages.en): string =>
   return messages[locale]?.[key] ?? messages.en[key];
 };
 
-export const messages = {
+export type Dict = {
+  role: string; selected: string; projects: string; viewSite: string;
+  viewRepo: string; download: string; technologies: string; backToTop: string;
+  rights: string; scroll: string; connect: string; repos: string;
+  web: string; playStore: string; appStore: string;
+};
+
+export const messages: { en: Dict; es: Dict } = {
   en: {
     role: 'Full Stack Developer',
     selected: 'Selected work',
@@ -51,4 +58,4 @@ export const messages = {
     playStore: 'Google Play',
     appStore: 'App Store',
   },
-} as const;
+};
