@@ -4,6 +4,11 @@ import './globals.css';
 export const metadata: Metadata = {
   title: 'Lucas Santillan — Portfolio',
   description: 'Full Stack Developer · Projects, experiments and ventures.',
+  icons: {
+    icon: [{ url: '/favicon.svg', type: 'image/svg+xml' }],
+    shortcut: '/favicon.svg',
+    apple: '/favicon.svg',
+  },
   openGraph: {
     title: 'Lucas Santillan — Portfolio',
     description: 'Full Stack Developer · Projects, experiments and ventures.',
