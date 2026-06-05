@@ -457,7 +457,7 @@ export default function Admin() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5 bg-white/5 p-4 rounded-xl border border-white/5">
               <div className="grid grid-cols-2 gap-3">
                 <Field label="Slug" v={editing.slug} on={(v) => setEditing({ ...editing, slug: v })} />
-                <Field label="Color" v={editing.color} on={(v) => setEditing({ ...editing, color: v })} type="color" />
+                <ColorField label="Color" v={editing.color} on={(v) => setEditing({ ...editing, color: v })} />
                 <Field label="Order (Orden)" v={String(editing.order)} on={(v) => setEditing({ ...editing, order: Number(v) || 0 })} type="number" />
                 <Field label="Year (Año)" v={String(editing.year || '')} on={(v) => setEditing({ ...editing, year: v ? Number(v) : undefined })} type="number" />
               </div>
@@ -729,6 +729,66 @@ function FieldWithIcon({ icon, label, v, on, placeholder = '' }: { icon: React.R
           onChange={(e) => on(e.target.value)}
           className="w-full bg-black/30 border border-white/10 rounded-xl pl-10 pr-3 py-2 outline-none focus:border-violet-400 text-sm transition focus:bg-black/50"
         />
+      </div>
+    </div>
+  );
+}
+
+function ColorField({ label, v, on }: { label: string; v: string; on: (v: string) => void }) {
+  const presets = [
+    '#6366f1', // Indigo
+    '#8b5cf6', // Violet
+    '#d946ef', // Fuchsia
+    '#f43f5e', // Rose
+    '#3b82f6', // Blue
+    '#06b6d4', // Cyan
+    '#10b981', // Emerald
+    '#f59e0b', // Amber
+  ];
+
+  return (
+    <div>
+      <label className="text-[11px] sm:text-xs font-mono text-slate-500 tracking-widest block">{label.toUpperCase()}</label>
+      
+      <div className="mt-1 flex items-center gap-2">
+        <div className="relative flex items-center flex-1">
+          {/* Custom color preview swatch / native color trigger */}
+          <div className="absolute left-2.5 w-6 h-6 rounded-lg border border-white/10 overflow-hidden cursor-pointer flex-shrink-0">
+            <input
+              type="color"
+              value={v}
+              onChange={(e) => on(e.target.value)}
+              className="absolute inset-0 w-[200%] h-[200%] -translate-x-[25%] -translate-y-[25%] cursor-pointer border-0 p-0"
+              style={{ backgroundColor: v }}
+            />
+          </div>
+          <input
+            type="text"
+            value={v}
+            onChange={(e) => on(e.target.value)}
+            placeholder="#ffffff"
+            maxLength={7}
+            className="w-full bg-black/30 border border-white/10 rounded-xl pl-11 pr-3 py-2 outline-none focus:border-violet-400 text-sm font-mono transition focus:bg-black/50"
+          />
+        </div>
+      </div>
+      
+      {/* Preset Swatches */}
+      <div className="mt-2 flex flex-wrap gap-1.5">
+        {presets.map((color) => (
+          <button
+            key={color}
+            type="button"
+            onClick={() => on(color)}
+            className={`w-6 h-6 rounded-full border transition-all ${
+              v.toLowerCase() === color.toLowerCase()
+                ? 'scale-110 border-white ring-2 ring-violet-500/50'
+                : 'border-white/10 hover:scale-105 hover:border-white/30'
+            }`}
+            style={{ backgroundColor: color }}
+            title={color}
+          />
+        ))}
       </div>
     </div>
   );
