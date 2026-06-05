@@ -1,5 +1,5 @@
 export type Repo = { type: string; url: string; label?: string; isPublic: boolean };
-export type Links = { web?: string; playStore?: string; appStore?: string };
+export type Links = { web?: string; playStore?: string; appStore?: string; windows?: string; macOS?: string; linux?: string; msStore?: string };
 export type Screenshot = { url: string; caption?: string };
 
 export type Project = {
