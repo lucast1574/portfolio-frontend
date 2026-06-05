@@ -21,6 +21,7 @@ export type Dict = {
   viewRepo: string; download: string; technologies: string; backToTop: string;
   rights: string; scroll: string; connect: string; repos: string;
   web: string; playStore: string; appStore: string;
+  available: string; workingOn: string;
 };
 
 export const messages: { en: Dict; es: Dict } = {
@@ -40,6 +41,8 @@ export const messages: { en: Dict; es: Dict } = {
     web: 'Website',
     playStore: 'Google Play',
     appStore: 'App Store',
+    available: 'AVAILABLE FOR PROJECTS',
+    workingOn: 'CURRENTLY WORKING ON',
   },
   es: {
     role: 'Full Stack Developer',
@@ -57,5 +60,8 @@ export const messages: { en: Dict; es: Dict } = {
     web: 'Sitio web',
     playStore: 'Google Play',
     appStore: 'App Store',
+    available: 'DISPONIBLE PARA PROYECTOS',
+    workingOn: 'TRABAJANDO EN ESTE MOMENTO',
   },
 };
+

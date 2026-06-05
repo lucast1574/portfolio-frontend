@@ -3,6 +3,7 @@ import { detectLocale, messages, t as tr } from '@/lib/locale';
 import type { Project, SiteConfig } from '@/lib/types';
 import Hero from '@/components/Hero';
 import ProjectCard from '@/components/ProjectCard';
+import ContactForm from '@/components/ContactForm';
 import Footer from '@/components/Footer';
 import Konami from '@/components/Konami';
 
@@ -52,6 +53,8 @@ export default async function Home() {
           ))}
         </section>
       )}
+
+      <ContactForm dict={dict} />
 
       <Footer dict={dict} />
     </main>

@@ -35,6 +35,7 @@ export const SITE_QUERY = `
       profile { name role bio }
       social { github linkedin youtube email }
       avatar
+      workingOn { title name proposalId }
     }
   }
 `;

@@ -23,4 +23,6 @@ export type SiteConfig = {
   profile: { name: string; role: string; bio: string };
   social: { github?: string; linkedin?: string; youtube?: string; email?: string };
   avatar?: string;
+  workingOn?: { title: string; name: string; proposalId?: string } | null;
 };
+

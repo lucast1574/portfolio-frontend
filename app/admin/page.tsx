@@ -3,21 +3,43 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { gql } from '@/lib/gql';
 import { motion } from 'framer-motion';
-import { Plus, Pencil, Trash2, Save, X, LogOut, Rocket } from 'lucide-react';
+import { Plus, Pencil, Trash2, Save, X, LogOut, Rocket, MessageSquare, Check, Ban, Calendar } from 'lucide-react';
 
-const ADMIN_PROJECTS = `query { projects(locale: "es", includeHidden: true) {
-  id slug order featured color isMobile tech year visible
-  i18n { name tagline description longDescription }
-  repos { type url label isPublic }
-  links { web playStore appStore }
-  screenshots { url caption }
-  thumbnail
-} }`;
+const ADMIN_DATA = `query {
+  projects(locale: "es", includeHidden: true) {
+    id slug order featured color isMobile tech year visible
+    i18n { name tagline description longDescription }
+    repos { type url label isPublic }
+    links { web playStore appStore }
+    screenshots { url caption }
+    thumbnail
+  }
+  siteConfig(locale: "es") {
+    profile { name role bio }
+    social { github linkedin youtube email }
+    avatar
+    workingOn { title name proposalId }
+  }
+  proposals {
+    id name email title message status createdAt
+  }
+}`;
 
 const CREATE = `mutation($input: CreateProjectInput!) { createProject(input: $input) { id } }`;
 const UPDATE = `mutation($input: UpdateProjectInput!) { updateProject(input: $input) { id } }`;
 const DELETE = `mutation($id: String!) { deleteProject(id: $id) }`;
 const LOGOUT = `mutation { logout }`;
+
+const ACCEPT_PROPOSAL = `mutation($id: String!) { acceptProposal(id: $id) { id status } }`;
+const REJECT_PROPOSAL = `mutation($id: String!) { rejectProposal(id: $id) { id status } }`;
+const COMPLETE_PROPOSAL = `mutation($id: String!) { completeProposal(id: $id) { id status } }`;
+const DELETE_PROPOSAL = `mutation($id: String!) { deleteProposal(id: $id) }`;
+const CLEAR_WORKING_ON = `mutation { updateSiteConfig(input: { clearWorkingOn: true }) { profile { name } } }`;
+const UPDATE_WORKING_ON = `mutation($title: String!, $name: String!) {
+  updateSiteConfig(input: { workingOn: { title: $title, name: $name } }) {
+    profile { name }
+  }
+}`;
 
 type Form = {
   id?: string;
@@ -50,11 +72,18 @@ export default function Admin() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
+  const [proposals, setProposals] = useState<any[]>([]);
+  const [siteConfig, setSiteConfig] = useState<any>(null);
+  const [tab, setTab] = useState<'projects' | 'proposals'>('projects');
+
   async function load() {
     try {
-      const r: any = await gql().request(ADMIN_PROJECTS);
+      const r: any = await gql().request(ADMIN_DATA);
       setList(r.projects || []);
-    } catch {
+      setProposals(r.proposals || []);
+      setSiteConfig(r.siteConfig || null);
+    } catch (e) {
+      console.error(e);
       router.push('/login');
     } finally {
       setLoading(false);
@@ -62,6 +91,61 @@ export default function Admin() {
   }
 
   useEffect(() => { load(); }, []);
+
+  async function handleAcceptProposal(id: string) {
+    try {
+      await gql().request(ACCEPT_PROPOSAL, { id });
+      load();
+    } catch (e: any) {
+      alert('Error: ' + (e.message || 'unknown'));
+    }
+  }
+
+  async function handleRejectProposal(id: string) {
+    try {
+      await gql().request(REJECT_PROPOSAL, { id });
+      load();
+    } catch (e: any) {
+      alert('Error: ' + (e.message || 'unknown'));
+    }
+  }
+
+  async function handleCompleteProposal(id: string) {
+    try {
+      await gql().request(COMPLETE_PROPOSAL, { id });
+      load();
+    } catch (e: any) {
+      alert('Error: ' + (e.message || 'unknown'));
+    }
+  }
+
+  async function handleDeleteProposal(id: string) {
+    if (!confirm('¿Borrar esta propuesta permanentemente?')) return;
+    try {
+      await gql().request(DELETE_PROPOSAL, { id });
+      load();
+    } catch (e: any) {
+      alert('Error: ' + (e.message || 'unknown'));
+    }
+  }
+
+  async function handleClearWorkingOn() {
+    try {
+      await gql().request(CLEAR_WORKING_ON);
+      load();
+    } catch (e: any) {
+      alert('Error: ' + (e.message || 'unknown'));
+    }
+  }
+
+  async function handleSetWorkingOn(title: string, name: string) {
+    try {
+      await gql().request(UPDATE_WORKING_ON, { title, name });
+      load();
+    } catch (e: any) {
+      alert('Error: ' + (e.message || 'unknown'));
+    }
+  }
 
   function startEdit(p: any) {
     setEditing({
@@ -123,46 +207,230 @@ export default function Admin() {
           <Rocket className="text-violet-400" size={22} /> <span className="text-gradient">Mission Control</span>
         </h1>
         <div className="flex gap-2">
-          <button onClick={() => setEditing({ ...blank })} className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-violet-500 text-slate-900 rounded-lg font-semibold hover:bg-violet-400 transition text-sm">
-            <Plus size={16} /> Nuevo
-          </button>
+          {tab === 'projects' && (
+            <button onClick={() => setEditing({ ...blank })} className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-violet-500 text-slate-900 rounded-lg font-semibold hover:bg-violet-400 transition text-sm">
+              <Plus size={16} /> Nuevo
+            </button>
+          )}
           <button onClick={logout} className="inline-flex items-center justify-center gap-2 px-4 py-2.5 glass rounded-lg hover:bg-white/10 transition text-sm">
             <LogOut size={16} /> <span className="hidden sm:inline">Salir</span>
           </button>
         </div>
       </header>
 
+      {/* Tabs Selector */}
+      <div className="flex gap-6 border-b border-white/10 mb-8">
+        <button
+          onClick={() => setTab('projects')}
+          className={`pb-3 text-sm font-semibold tracking-wider transition relative outline-none ${
+            tab === 'projects' ? 'text-violet-400' : 'text-slate-400 hover:text-slate-300'
+          }`}
+        >
+          Proyectos
+          {tab === 'projects' && (
+            <motion.div layoutId="activeTab" className="absolute bottom-0 left-0 right-0 h-[2px] bg-violet-500" />
+          )}
+        </button>
+        <button
+          onClick={() => setTab('proposals')}
+          className={`pb-3 text-sm font-semibold tracking-wider transition relative outline-none flex items-center gap-2 ${
+            tab === 'proposals' ? 'text-violet-400' : 'text-slate-400 hover:text-slate-300'
+          }`}
+        >
+          <span>Propuestas y Mensajes</span>
+          {proposals.filter((p) => p.status === 'pending').length > 0 && (
+            <span className="bg-violet-500 text-slate-900 text-[10px] px-2 py-0.5 rounded-full font-extrabold animate-pulse">
+              {proposals.filter((p) => p.status === 'pending').length}
+            </span>
+          )}
+          {tab === 'proposals' && (
+            <motion.div layoutId="activeTab" className="absolute bottom-0 left-0 right-0 h-[2px] bg-violet-500" />
+          )}
+        </button>
+      </div>
+
       {loading && <div className="text-slate-400">Cargando…</div>}
-      {!loading && list.length === 0 && (
-        <div className="glass rounded-xl p-8 text-center text-slate-400">
-          <p className="mb-2">Aún no hay proyectos.</p>
-          <p className="text-sm text-slate-500">Crea el primero con el botón <b>Nuevo</b> ↑</p>
-        </div>
+
+      {!loading && tab === 'projects' && (
+        <>
+          {list.length === 0 && (
+            <div className="glass rounded-xl p-8 text-center text-slate-400">
+              <p className="mb-2">Aún no hay proyectos.</p>
+              <p className="text-sm text-slate-500">Crea el primero con el botón <b>Nuevo</b> ↑</p>
+            </div>
+          )}
+
+          <div className="space-y-3">
+            {list.map((p) => (
+              <motion.div
+                key={p.id}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="glass rounded-xl p-3 sm:p-4 flex items-center gap-3 sm:gap-4"
+                style={{ borderLeftColor: p.color, borderLeftWidth: 4 }}
+              >
+                <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ background: p.color }} />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="font-semibold truncate text-sm sm:text-base">{p.i18n?.name || p.slug}</span>
+                    {p.featured && <span className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-amber-400 text-amber-400">★</span>}
+                    {!p.visible && <span className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-slate-500 text-slate-400">HIDDEN</span>}
+                  </div>
+                  <div className="text-[11px] sm:text-xs text-slate-500 font-mono truncate">{p.slug} · order {p.order} {p.year ? `· ${p.year}` : ''}</div>
+                </div>
+                <button onClick={() => startEdit(p)} className="p-2 hover:bg-white/10 active:bg-white/15 rounded-lg" aria-label="Edit"><Pencil size={16} /></button>
+                <button onClick={() => del(p.id)} className="p-2 hover:bg-rose-500/20 active:bg-rose-500/30 rounded-lg text-rose-400" aria-label="Delete"><Trash2 size={16} /></button>
+              </motion.div>
+            ))}
+          </div>
+        </>
       )}
 
-      <div className="space-y-3">
-        {list.map((p) => (
-          <motion.div
-            key={p.id}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="glass rounded-xl p-3 sm:p-4 flex items-center gap-3 sm:gap-4"
-            style={{ borderLeftColor: p.color, borderLeftWidth: 4 }}
-          >
-            <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ background: p.color }} />
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="font-semibold truncate text-sm sm:text-base">{p.i18n?.name || p.slug}</span>
-                {p.featured && <span className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-amber-400 text-amber-400">★</span>}
-                {!p.visible && <span className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-slate-500 text-slate-400">HIDDEN</span>}
+      {!loading && tab === 'proposals' && (
+        <>
+          {/* Active work in progress banner */}
+          {siteConfig?.workingOn ? (
+            <div className="glass rounded-xl p-4 mb-6 border border-amber-500/20 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div>
+                <h3 className="text-xs font-mono tracking-wider text-amber-400 uppercase mb-1 flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+                  Trabajo en Curso Activo
+                </h3>
+                <p className="text-sm text-slate-200 font-semibold">{siteConfig.workingOn.title}</p>
+                <p className="text-xs text-slate-400 mt-0.5">Cliente: {siteConfig.workingOn.name}</p>
               </div>
-              <div className="text-[11px] sm:text-xs text-slate-500 font-mono truncate">{p.slug} · order {p.order} {p.year ? `· ${p.year}` : ''}</div>
+              <button
+                onClick={handleClearWorkingOn}
+                className="px-3.5 py-2 bg-rose-500/10 hover:bg-rose-500/20 active:bg-rose-500/25 text-rose-400 text-xs font-semibold rounded-lg transition border border-rose-500/20"
+              >
+                Desactivar Estado
+              </button>
             </div>
-            <button onClick={() => startEdit(p)} className="p-2 hover:bg-white/10 active:bg-white/15 rounded-lg" aria-label="Edit"><Pencil size={16} /></button>
-            <button onClick={() => del(p.id)} className="p-2 hover:bg-rose-500/20 active:bg-rose-500/30 rounded-lg text-rose-400" aria-label="Delete"><Trash2 size={16} /></button>
-          </motion.div>
-        ))}
-      </div>
+          ) : (
+            <div className="glass rounded-xl p-4 mb-6 border border-emerald-500/10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div>
+                <h3 className="text-xs font-mono tracking-wider text-emerald-400 uppercase mb-1 flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  Estado Disponible
+                </h3>
+                <p className="text-xs text-slate-400 max-w-xl leading-relaxed">
+                  Actualmente se muestra "Disponible para proyectos" en el portfolio. Puedes activar un estado de trabajo aceptando una propuesta de la lista de abajo, o creándolo manualmente.
+                </p>
+              </div>
+              <button
+                onClick={() => {
+                  const t = prompt('Título del proyecto:');
+                  const n = prompt('Nombre del cliente / empresa:');
+                  if (t && n) handleSetWorkingOn(t, n);
+                }}
+                className="px-3.5 py-2 bg-violet-500 hover:bg-violet-400 text-slate-900 font-bold text-xs rounded-lg transition"
+              >
+                + Activar Manualmente
+              </button>
+            </div>
+          )}
+
+          {/* Proposals List */}
+          {proposals.length === 0 && (
+            <div className="glass rounded-xl p-8 text-center text-slate-400">
+              <p className="mb-2">Aún no hay propuestas ni mensajes.</p>
+              <p className="text-sm text-slate-500">Los mensajes enviados desde el formulario de contacto aparecerán aquí.</p>
+            </div>
+          )}
+
+          <div className="space-y-4">
+            {proposals.map((p) => {
+              let badgeColor = 'text-slate-400 border-slate-500/20 bg-slate-500/5';
+              let badgeText = 'Pendiente';
+              if (p.status === 'accepted') {
+                badgeColor = 'text-violet-300 border-violet-500/20 bg-violet-500/10';
+                badgeText = 'Aceptado (En Curso)';
+              } else if (p.status === 'completed') {
+                badgeColor = 'text-emerald-300 border-emerald-500/20 bg-emerald-500/10';
+                badgeText = 'Completado';
+              } else if (p.status === 'rejected') {
+                badgeColor = 'text-rose-400 border-rose-500/20 bg-rose-500/10';
+                badgeText = 'Rechazado';
+              }
+
+              return (
+                <motion.div
+                  key={p.id}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="glass rounded-xl p-4 sm:p-5 flex flex-col gap-4 border border-white/5 hover:border-white/10 transition"
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/5 pb-3">
+                    <div>
+                      <div className="flex items-center gap-3 flex-wrap">
+                        <h4 className="font-semibold text-base text-slate-200">{p.title}</h4>
+                        <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full border ${badgeColor}`}>
+                          {badgeText.toUpperCase()}
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-400 mt-1 flex flex-wrap gap-x-2 gap-y-1">
+                        <span className="font-medium text-slate-300">{p.name}</span>
+                        <span className="text-slate-600">·</span>
+                        <a href={`mailto:${p.email}`} className="text-violet-400 hover:underline">{p.email}</a>
+                      </p>
+                    </div>
+                    <div className="text-[11px] font-mono text-slate-500 flex items-center gap-1.5 sm:self-start mt-1 sm:mt-0">
+                      <Calendar size={12} /> {new Date(p.createdAt).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                    </div>
+                  </div>
+
+                  <div className="text-sm text-slate-300 bg-black/20 rounded-lg p-3 whitespace-pre-wrap leading-relaxed font-sans border border-white/5">
+                    {p.message}
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2 pt-1">
+                    {p.status === 'pending' && (
+                      <>
+                        <button
+                          onClick={() => handleAcceptProposal(p.id)}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-violet-500 hover:bg-violet-400 text-slate-900 text-xs font-bold rounded-lg transition"
+                        >
+                          <Check size={13} /> Aceptar y Empezar
+                        </button>
+                        <button
+                          onClick={() => handleRejectProposal(p.id)}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 glass hover:bg-rose-500/10 hover:text-rose-300 border border-white/10 hover:border-rose-500/20 text-slate-300 text-xs font-semibold rounded-lg transition"
+                        >
+                          <Ban size={13} /> Rechazar
+                        </button>
+                      </>
+                    )}
+                    {p.status === 'accepted' && (
+                      <>
+                        <button
+                          onClick={() => handleCompleteProposal(p.id)}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-900 text-xs font-bold rounded-lg transition"
+                        >
+                          <Check size={13} /> Marcar Completado
+                        </button>
+                        <button
+                          onClick={() => handleRejectProposal(p.id)}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 glass hover:bg-rose-500/10 hover:text-rose-300 border border-white/10 hover:border-rose-500/20 text-slate-300 text-xs font-semibold rounded-lg transition"
+                        >
+                          <Ban size={13} /> Cancelar / Rechazar
+                        </button>
+                      </>
+                    )}
+                    <button
+                      onClick={() => handleDeleteProposal(p.id)}
+                      className="ml-auto p-2 hover:bg-rose-500/20 active:bg-rose-500/30 rounded-lg text-rose-400 transition"
+                      title="Eliminar propuesta"
+                      aria-label="Delete proposal"
+                    >
+                      <Trash2 size={15} />
+                    </button>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        </>
+      )}
 
       {editing && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 overflow-y-auto" onClick={() => setEditing(null)}>
