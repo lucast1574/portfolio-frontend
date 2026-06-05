@@ -98,15 +98,16 @@ export default function Hero({ site, dict }: { site: SiteConfig; dict: Dict }) {
           )}
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 1.4 }}
-          className="absolute left-1/2 -translate-x-1/2 -bottom-4 sm:bottom-8 text-[10px] sm:text-xs text-slate-500 tracking-[0.3em]"
-        >
-          <span className="block animate-float-med">↓ {dict.scroll.toUpperCase()}</span>
-        </motion.div>
       </div>
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1, delay: 1.4 }}
+        className="absolute left-1/2 -translate-x-1/2 bottom-6 sm:bottom-10 text-[10px] sm:text-xs text-slate-500 tracking-[0.3em] pointer-events-none"
+      >
+        <span className="block animate-float-med">↓ {dict.scroll.toUpperCase()}</span>
+      </motion.div>
     </section>
   );
 }
