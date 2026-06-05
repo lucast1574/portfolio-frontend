@@ -443,7 +443,7 @@ export default function Admin() {
       )}
 
       {editing && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 overflow-y-auto" onClick={() => setEditing(null)}>
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 overflow-y-auto">
           <div
             className="bg-slate-950 border border-white/10 rounded-t-2xl sm:rounded-2xl max-w-3xl w-full p-5 sm:p-6 max-h-[95svh] sm:max-h-[90vh] overflow-y-auto scrollbar-thin safe-x"
             onClick={(e) => e.stopPropagation()}
@@ -452,17 +452,14 @@ export default function Admin() {
               <h2 className="text-lg sm:text-xl font-bold">{editing.id ? 'Editar' : 'Nuevo proyecto'}</h2>
               <button onClick={() => setEditing(null)} className="p-2 hover:bg-white/10 rounded" aria-label="Close"><X size={18} /></button>
             </div>
-
+ 
             {/* General Info Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5 bg-white/5 p-4 rounded-xl border border-white/5">
-              <div className="grid grid-cols-2 gap-3">
-                <Field label="Slug" v={editing.slug} on={(v) => setEditing({ ...editing, slug: v })} />
-                <ColorField label="Color" v={editing.color} on={(v) => setEditing({ ...editing, color: v })} />
-                <Field label="Order (Orden)" v={String(editing.order)} on={(v) => setEditing({ ...editing, order: Number(v) || 0 })} type="number" />
-                <Field label="Year (Año)" v={String(editing.year || '')} on={(v) => setEditing({ ...editing, year: v ? Number(v) : undefined })} type="number" />
-              </div>
-              <div className="space-y-3">
-                <Field label="Thumbnail URL (Portada)" v={editing.thumbnail || ''} on={(v) => setEditing({ ...editing, thumbnail: v })} />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5 bg-white/5 p-4 rounded-xl border border-white/5">
+              <Field label="Slug" v={editing.slug} on={(v) => setEditing({ ...editing, slug: v })} />
+              <ColorField label="Color" v={editing.color} on={(v) => setEditing({ ...editing, color: v })} />
+              <Field label="Order (Orden)" v={String(editing.order)} on={(v) => setEditing({ ...editing, order: Number(v) || 0 })} type="number" />
+              <Field label="Year (Año)" v={String(editing.year || '')} on={(v) => setEditing({ ...editing, year: v ? Number(v) : undefined })} type="number" />
+              <div className="col-span-1 sm:col-span-2">
                 <Field label="Tech stack (Tecnologías, separadas por coma)" v={editing.tech} on={(v) => setEditing({ ...editing, tech: v })} />
               </div>
             </div>
