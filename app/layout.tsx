@@ -1,9 +1,10 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
   title: 'Lucas Santillan — Portfolio',
   description: 'Full Stack Developer · Projects, experiments and ventures.',
+  metadataBase: new URL('https://lucas.santillan.pro'),
   icons: {
     icon: [{ url: '/favicon.svg', type: 'image/svg+xml' }],
     shortcut: '/favicon.svg',
@@ -16,6 +17,20 @@ export const metadata: Metadata = {
     siteName: 'Lucas Santillan',
     type: 'website',
   },
+  twitter: {
+    card: 'summary',
+    title: 'Lucas Santillan — Portfolio',
+    description: 'Full Stack Developer · Projects, experiments and ventures.',
+  },
+  formatDetection: { telephone: false, email: false, address: false },
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: '#050617',
+  colorScheme: 'dark',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

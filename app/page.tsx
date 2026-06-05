@@ -7,6 +7,7 @@ import Footer from '@/components/Footer';
 import Konami from '@/components/Konami';
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 async function fetchData(locale: 'es' | 'en'): Promise<{ projects: Project[]; site: SiteConfig }> {
   const fallback = {
@@ -40,9 +41,9 @@ export default async function Home() {
       <Hero site={site} dict={dict} />
 
       {projects.length > 0 && (
-        <section className="relative z-10 py-16">
-          <div className="max-w-6xl mx-auto px-6 mb-8">
-            <h2 className="text-sm font-mono tracking-[0.3em] text-slate-500 uppercase">
+        <section className="relative z-10 py-12 sm:py-16">
+          <div className="max-w-6xl mx-auto px-5 sm:px-6 mb-6 sm:mb-8 safe-x">
+            <h2 className="text-[10px] sm:text-sm font-mono tracking-[0.3em] text-slate-500 uppercase">
               ✦ {dict.selected}
             </h2>
           </div>
