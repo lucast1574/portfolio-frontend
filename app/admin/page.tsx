@@ -3,7 +3,39 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { gql } from '@/lib/gql';
 import { motion } from 'framer-motion';
-import { Plus, Pencil, Trash2, Save, X, LogOut, Rocket, MessageSquare, Check, Ban, Calendar, Globe, Monitor, Apple, Terminal, ShoppingBag, Link, Play } from 'lucide-react';
+import { Plus, Pencil, Trash2, Save, X, LogOut, Rocket, MessageSquare, Check, Ban, Calendar, Globe, Monitor, Apple, Terminal, ShoppingBag, Link, Play, Upload, ImageIcon, AlertTriangle, Loader2 } from 'lucide-react';
+
+/** Try hard to extract a human-readable message from any error shape
+ *  (graphql-request, fetch, plain Error, JSON blobs, etc). */
+function extractErrorMessage(err: any): string {
+  if (!err) return 'Error desconocido';
+  if (typeof err === 'string') return err;
+  // graphql-request shape
+  const gqlErrors = err?.response?.errors;
+  if (Array.isArray(gqlErrors) && gqlErrors.length) {
+    return gqlErrors.map((e: any) => e?.message || JSON.stringify(e)).join(' · ');
+  }
+  if (err?.message) {
+    // graphql-request sometimes stuffs the whole JSON into .message
+    const m = String(err.message);
+    // strip a leading "Project validation failed:" payload tail
+    const idx = m.indexOf(': {');
+    return idx > 0 ? m.slice(0, idx) : m;
+  }
+  try { return JSON.stringify(err); } catch { return 'Error desconocido'; }
+}
+
+function slugify(s: string): string {
+  return (s || '')
+    .toLowerCase()
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 60);
+}
+
+const API_BASE = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/graphql').replace(/\/graphql\/?$/, '');
 
 const ADMIN_DATA = `query {
   projects(locale: "es", includeHidden: true) {
@@ -72,6 +104,7 @@ export default function Admin() {
   const [editing, setEditing] = useState<Form | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
 
   const [proposals, setProposals] = useState<any[]>([]);
   const [siteConfig, setSiteConfig] = useState<any>(null);
@@ -163,16 +196,47 @@ export default function Admin() {
 
   async function save() {
     if (!editing) return;
+    setFormError(null);
+
+    // --- Client-side validation: surface required fields BEFORE hitting the API ---
+    const errors: string[] = [];
+    let workingSlug = (editing.slug || '').trim();
+    const nameEs = (editing.nameEs || '').trim();
+    const nameEn = (editing.nameEn || '').trim();
+    if (!nameEs && !nameEn) {
+      errors.push('Falta el nombre del proyecto (en español o inglés).');
+    }
+    if (!workingSlug) {
+      // Try to auto-generate from nameEs/nameEn instead of failing
+      workingSlug = slugify(nameEs || nameEn);
+      if (!workingSlug) {
+        errors.push('Falta el slug (identificador url-friendly). Ej: "mi-proyecto".');
+      } else {
+        // reflect it in the form so user sees what was used
+        setEditing({ ...editing, slug: workingSlug });
+      }
+    } else if (!/^[a-z0-9][a-z0-9-_]{0,59}$/.test(workingSlug)) {
+      errors.push('Slug inválido: usa solo minúsculas, números y guiones (- _).');
+    }
+    if (errors.length) {
+      setFormError(errors.join(' '));
+      // Scroll to top of the modal so user sees the banner
+      try {
+        document.querySelector('[data-modal-scroll]')?.scrollTo({ top: 0, behavior: 'smooth' });
+      } catch {}
+      return;
+    }
+
     setSaving(true);
     const input: any = {
-      slug: editing.slug, color: editing.color, order: Number(editing.order),
+      slug: workingSlug, color: editing.color, order: Number(editing.order),
       featured: editing.featured, visible: editing.visible, isMobile: editing.isMobile,
       year: editing.year ? Number(editing.year) : undefined,
       thumbnail: editing.thumbnail || undefined,
       tech: editing.tech.split(',').map((t) => t.trim()).filter(Boolean),
       i18n: {
-        es: { name: editing.nameEs, tagline: editing.taglineEs, description: editing.descEs, longDescription: editing.longEs },
-        en: { name: editing.nameEn || editing.nameEs, tagline: editing.taglineEn || editing.taglineEs, description: editing.descEn || editing.descEs, longDescription: editing.longEn || editing.longEs },
+        es: { name: nameEs || nameEn, tagline: editing.taglineEs, description: editing.descEs, longDescription: editing.longEs },
+        en: { name: nameEn || nameEs, tagline: editing.taglineEn || editing.taglineEs, description: editing.descEn || editing.descEs, longDescription: editing.longEn || editing.longEs },
       },
       links: {
         web: editing.web || undefined,
@@ -190,9 +254,13 @@ export default function Admin() {
       if (editing.id) await gql().request(UPDATE, { input: { id: editing.id, ...input } });
       else await gql().request(CREATE, { input });
       setEditing(null);
+      setFormError(null);
       load();
     } catch (e: any) {
-      alert('Error: ' + (e.message || 'unknown'));
+      setFormError(extractErrorMessage(e));
+      try {
+        document.querySelector('[data-modal-scroll]')?.scrollTo({ top: 0, behavior: 'smooth' });
+      } catch {}
     } finally {
       setSaving(false);
     }
@@ -218,7 +286,7 @@ export default function Admin() {
         </h1>
         <div className="flex gap-2">
           {tab === 'projects' && (
-            <button onClick={() => setEditing({ ...blank })} className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-violet-500 text-slate-900 rounded-lg font-semibold hover:bg-violet-400 transition text-sm">
+            <button onClick={() => { setFormError(null); setEditing({ ...blank }); }} className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-violet-500 text-slate-900 rounded-lg font-semibold hover:bg-violet-400 transition text-sm">
               <Plus size={16} /> Nuevo
             </button>
           )}
@@ -280,6 +348,19 @@ export default function Admin() {
                 style={{ borderLeftColor: p.color, borderLeftWidth: 4 }}
               >
                 <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ background: p.color }} />
+                <div
+                  className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex-shrink-0 overflow-hidden border border-white/10 bg-black/40 flex items-center justify-center"
+                  style={{ boxShadow: `inset 0 0 0 1px ${p.color}33` }}
+                >
+                  {p.thumbnail ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={p.thumbnail} alt={p.i18n?.name || p.slug} className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-[10px] sm:text-xs font-bold" style={{ color: p.color }}>
+                      {(p.i18n?.name || p.slug || '?').slice(0, 2).toUpperCase()}
+                    </span>
+                  )}
+                </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-semibold truncate text-sm sm:text-base">{p.i18n?.name || p.slug}</span>
@@ -445,23 +526,49 @@ export default function Admin() {
       {editing && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 overflow-y-auto">
           <div
+            data-modal-scroll
             className="bg-slate-950 border border-white/10 rounded-t-2xl sm:rounded-2xl max-w-3xl w-full p-5 sm:p-6 max-h-[95svh] sm:max-h-[90vh] overflow-y-auto scrollbar-thin safe-x"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="sticky top-0 -mt-5 sm:-mt-6 -mx-5 sm:-mx-6 px-5 sm:px-6 py-4 mb-5 bg-slate-950 border-b border-white/5 flex items-center justify-between z-10">
               <h2 className="text-lg sm:text-xl font-bold">{editing.id ? 'Editar' : 'Nuevo proyecto'}</h2>
-              <button onClick={() => setEditing(null)} className="p-2 hover:bg-white/10 rounded" aria-label="Close"><X size={18} /></button>
+              <button onClick={() => { setEditing(null); setFormError(null); }} className="p-2 hover:bg-white/10 rounded" aria-label="Close"><X size={18} /></button>
             </div>
+
+            {formError && (
+              <div className="mb-4 p-3 sm:p-4 rounded-xl border border-rose-500/40 bg-rose-500/10 text-rose-200 flex items-start gap-3">
+                <AlertTriangle size={18} className="flex-shrink-0 mt-0.5 text-rose-400" />
+                <div className="text-sm leading-relaxed flex-1">
+                  <div className="font-semibold text-rose-100 mb-0.5">No se pudo guardar el proyecto</div>
+                  <div className="text-rose-200/90">{formError}</div>
+                </div>
+                <button onClick={() => setFormError(null)} className="text-rose-300 hover:text-rose-100 p-1 -mr-1" aria-label="Cerrar"><X size={16} /></button>
+              </div>
+            )}
  
             {/* General Info Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5 bg-white/5 p-4 rounded-xl border border-white/5">
-              <Field label="Slug" v={editing.slug} on={(v) => setEditing({ ...editing, slug: v })} />
+              <Field
+                label="Slug (identificador URL)"
+                v={editing.slug}
+                placeholder="se autogenera del nombre"
+                on={(v) => setEditing({ ...editing, slug: v })}
+              />
               <ColorField label="Color" v={editing.color} on={(v) => setEditing({ ...editing, color: v })} />
               <Field label="Order (Orden)" v={String(editing.order)} on={(v) => setEditing({ ...editing, order: Number(v) || 0 })} type="number" />
               <Field label="Year (Año)" v={String(editing.year || '')} on={(v) => setEditing({ ...editing, year: v ? Number(v) : undefined })} type="number" />
               <div className="col-span-1 sm:col-span-2">
                 <Field label="Tech stack (Tecnologías, separadas por coma)" v={editing.tech} on={(v) => setEditing({ ...editing, tech: v })} />
               </div>
+            </div>
+
+            {/* Logo / Thumbnail uploader */}
+            <div className="mb-5">
+              <LogoUpload
+                value={editing.thumbnail || ''}
+                slug={editing.slug || slugify(editing.nameEs || editing.nameEn)}
+                onChange={(url) => setEditing({ ...editing, thumbnail: url })}
+              />
             </div>
 
             {/* Checkboxes styled as modern toggle cards */}
@@ -509,7 +616,19 @@ export default function Admin() {
               <div className="bg-white/5 p-4 rounded-xl border border-white/5">
                 <h3 className="text-xs font-mono tracking-widest text-slate-400 mb-3 border-b border-white/5 pb-2">CONTENIDO EN ESPAÑOL</h3>
                 <div className="space-y-3">
-                  <Field label="Nombre del proyecto" v={editing.nameEs} on={(v) => setEditing({ ...editing, nameEs: v })} />
+                  <Field
+                    label="Nombre del proyecto"
+                    v={editing.nameEs}
+                    on={(v) => {
+                      // Auto-generate slug while it's still blank or in sync with the previous name
+                      const prevAuto = slugify(editing.nameEs);
+                      const next: any = { ...editing, nameEs: v };
+                      if (!editing.slug || editing.slug === prevAuto) {
+                        next.slug = slugify(v);
+                      }
+                      setEditing(next);
+                    }}
+                  />
                   <Field label="Tagline (Subtítulo)" v={editing.taglineEs} on={(v) => setEditing({ ...editing, taglineEs: v })} />
                   <Field label="Descripción corta" v={editing.descEs} on={(v) => setEditing({ ...editing, descEs: v })} multiline />
                 </div>
@@ -786,6 +905,165 @@ function ColorField({ label, v, on }: { label: string; v: string; on: (v: string
             title={color}
           />
         ))}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Logo / thumbnail uploader.
+ * - Drag & drop or click to pick a PNG/JPG/WebP/SVG/GIF.
+ * - Uploads to backend REST `POST /upload/logo` (cookie-authenticated).
+ * - On success, fills `thumbnail` with the public URL.
+ * - User can also paste a URL manually.
+ */
+function LogoUpload({
+  value,
+  slug,
+  onChange,
+}: {
+  value: string;
+  slug?: string;
+  onChange: (url: string) => void;
+}) {
+  const [uploading, setUploading] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+  const [dragOver, setDragOver] = useState(false);
+
+  async function uploadFile(file: File) {
+    setErr(null);
+    const MAX = 4 * 1024 * 1024;
+    if (!file.type.startsWith('image/')) {
+      setErr('El archivo debe ser una imagen (PNG, JPG, WebP, SVG, GIF).');
+      return;
+    }
+    if (file.size > MAX) {
+      setErr(`Imagen muy pesada (${(file.size / 1024 / 1024).toFixed(2)} MB). Máximo 4 MB.`);
+      return;
+    }
+    setUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      const qs = slug ? `?slug=${encodeURIComponent(slug)}` : '';
+      const res = await fetch(`${API_BASE}/upload/logo${qs}`, {
+        method: 'POST',
+        credentials: 'include',
+        body: fd,
+      });
+      if (!res.ok) {
+        let msg = `HTTP ${res.status}`;
+        try {
+          const j = await res.json();
+          msg = j?.message || j?.error || msg;
+        } catch {}
+        throw new Error(msg);
+      }
+      const data = await res.json();
+      if (!data?.url) throw new Error('Respuesta inválida del servidor (sin URL).');
+      onChange(data.url);
+    } catch (e: any) {
+      setErr(e?.message || 'No se pudo subir la imagen.');
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  return (
+    <div className="bg-white/5 p-4 rounded-xl border border-white/5">
+      <h3 className="text-xs font-mono tracking-widest text-slate-400 mb-3 border-b border-white/5 pb-2 flex items-center gap-2">
+        <ImageIcon size={14} className="text-violet-400" /> LOGO / THUMBNAIL DEL PROYECTO
+      </h3>
+
+      <div className="flex flex-col sm:flex-row gap-4">
+        {/* Preview */}
+        <div className="w-full sm:w-44 flex-shrink-0">
+          <div className="aspect-video rounded-xl border border-white/10 bg-black/40 overflow-hidden flex items-center justify-center">
+            {value ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={value} alt="Logo preview" className="w-full h-full object-cover" />
+            ) : (
+              <div className="text-slate-600 text-xs font-mono flex flex-col items-center gap-1">
+                <ImageIcon size={28} />
+                <span>Sin logo</span>
+              </div>
+            )}
+          </div>
+          {value && (
+            <button
+              type="button"
+              onClick={() => onChange('')}
+              className="mt-2 w-full text-[11px] font-mono text-rose-400 hover:text-rose-300 px-2 py-1.5 rounded-lg border border-rose-500/20 hover:bg-rose-500/10 transition flex items-center justify-center gap-1.5"
+            >
+              <Trash2 size={12} /> Quitar
+            </button>
+          )}
+        </div>
+
+        {/* Drop zone + URL */}
+        <div className="flex-1 space-y-3">
+          <label
+            onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+            onDragLeave={() => setDragOver(false)}
+            onDrop={(e) => {
+              e.preventDefault();
+              setDragOver(false);
+              const f = e.dataTransfer.files?.[0];
+              if (f) uploadFile(f);
+            }}
+            className={`block cursor-pointer rounded-xl border-2 border-dashed transition px-4 py-6 text-center ${
+              dragOver
+                ? 'border-violet-400 bg-violet-500/10'
+                : 'border-white/15 bg-black/30 hover:border-violet-400/50 hover:bg-black/40'
+            } ${uploading ? 'opacity-60 pointer-events-none' : ''}`}
+          >
+            <input
+              type="file"
+              accept="image/png,image/jpeg,image/webp,image/svg+xml,image/gif"
+              className="hidden"
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) uploadFile(f);
+                // reset so re-selecting the same file fires onChange
+                e.currentTarget.value = '';
+              }}
+              disabled={uploading}
+            />
+            <div className="flex flex-col items-center gap-1.5 text-slate-300">
+              {uploading ? (
+                <>
+                  <Loader2 size={20} className="animate-spin text-violet-400" />
+                  <span className="text-sm">Subiendo…</span>
+                </>
+              ) : (
+                <>
+                  <Upload size={20} className="text-violet-400" />
+                  <span className="text-sm font-semibold">Arrastra una imagen o haz clic</span>
+                  <span className="text-[10px] text-slate-500 font-mono tracking-wider">PNG · JPG · WEBP · SVG · GIF · máx 4 MB</span>
+                </>
+              )}
+            </div>
+          </label>
+
+          {/* Manual URL fallback */}
+          <div>
+            <label className="text-[10px] font-mono text-slate-500 tracking-widest">O PEGA UNA URL</label>
+            <input
+              type="text"
+              value={value}
+              onChange={(e) => onChange(e.target.value)}
+              placeholder="https://…/logo.png"
+              className="mt-1 w-full bg-black/30 border border-white/10 rounded-xl px-3 py-2 outline-none focus:border-violet-400 text-sm font-mono transition focus:bg-black/50"
+            />
+          </div>
+
+          {err && (
+            <div className="text-xs text-rose-300 bg-rose-500/10 border border-rose-500/30 rounded-lg px-3 py-2 flex items-start gap-2">
+              <AlertTriangle size={14} className="flex-shrink-0 mt-0.5" />
+              <span>{err}</span>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
