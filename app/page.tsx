@@ -57,6 +57,9 @@ export default async function Home() {
       <ContactForm dict={dict} />
 
       <Footer dict={dict} />
+
+      {/* Glow en el fin de la página (abajo del todo) */}
+      <div className="absolute -bottom-24 -left-12 sm:-bottom-40 sm:-left-20 w-[280px] h-[280px] sm:w-[500px] sm:h-[500px] rounded-full bg-gradient-to-tr from-blue-500/20 via-cyan-400/5 to-transparent blur-3xl pointer-events-none z-0" />
     </main>
   );
 }

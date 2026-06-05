@@ -9,7 +9,6 @@ export default function Hero({ site, dict }: { site: SiteConfig; dict: Dict }) {
     <section className="relative z-10 min-h-[100svh] flex items-center justify-center px-5 sm:px-6 py-16 sm:py-20 overflow-hidden safe-x">
       {/* Planet glows — más chicos en mobile */}
       <div className="absolute -top-24 -right-24 sm:-top-40 sm:-right-40 w-[320px] h-[320px] sm:w-[600px] sm:h-[600px] rounded-full bg-gradient-to-br from-violet-600/30 via-fuchsia-500/10 to-transparent blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-24 -left-12 sm:-bottom-40 sm:-left-20 w-[280px] h-[280px] sm:w-[500px] sm:h-[500px] rounded-full bg-gradient-to-tr from-blue-500/20 via-cyan-400/5 to-transparent blur-3xl pointer-events-none" />
 
       {/* Orbits — solo desktop */}
       <div className="absolute right-12 top-1/2 hidden lg:block">
