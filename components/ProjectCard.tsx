@@ -36,26 +36,59 @@ export default function ProjectCard({ project, dict, index }: { project: Project
           <motion.div
             whileHover={{ scale: 1.02, rotateY: isEven ? 3 : -3 }}
             transition={{ duration: 0.4 }}
-            className="relative aspect-video rounded-xl sm:rounded-2xl overflow-hidden glass group"
-            style={{ boxShadow: `0 20px 50px -15px ${color}55` }}
+            className="relative aspect-square sm:aspect-video rounded-xl sm:rounded-2xl overflow-hidden glass group"
+            style={{
+              boxShadow: `0 20px 50px -15px ${color}55`,
+              // Subtle radial of the project color behind the logo so it feels integrated
+              background: `radial-gradient(circle at 50% 45%, ${color}22 0%, ${color}0a 45%, transparent 75%), linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01))`,
+            }}
           >
+            {/* Faint grid for that "app icon on a board" feel */}
+            <div
+              className="absolute inset-0 pointer-events-none opacity-[0.07]"
+              style={{
+                backgroundImage:
+                  'linear-gradient(to right, rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.5) 1px, transparent 1px)',
+                backgroundSize: '32px 32px',
+              }}
+            />
+            {/* Glow halo behind the logo */}
+            <div
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3/5 h-3/5 rounded-full blur-3xl pointer-events-none"
+              style={{ background: `${color}33` }}
+            />
+
             {project.thumbnail ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={project.thumbnail}
-                alt={project.i18n.name}
-                className="w-full h-full object-cover"
-                loading="lazy"
-                decoding="async"
-              />
+              <div className="absolute inset-0 flex items-center justify-center p-8 sm:p-12 md:p-14">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={project.thumbnail}
+                  alt={project.i18n.name}
+                  className="max-w-full max-h-full object-contain transition-transform duration-500 group-hover:scale-105 drop-shadow-[0_8px_24px_rgba(0,0,0,0.45)]"
+                  style={{ filter: `drop-shadow(0 0 28px ${color}66)` }}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-5xl sm:text-6xl font-bold" style={{ color }}>
-                {project.i18n.name?.slice(0, 2).toUpperCase() || '✦'}
+              <div className="w-full h-full flex items-center justify-center">
+                <span
+                  className="text-6xl sm:text-7xl md:text-8xl font-extrabold tracking-tight"
+                  style={{
+                    color,
+                    textShadow: `0 0 40px ${color}88, 0 8px 24px rgba(0,0,0,0.45)`,
+                  }}
+                >
+                  {project.i18n.name?.slice(0, 2).toUpperCase() || '✦'}
+                </span>
               </div>
             )}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+
             {project.year && (
-              <span className="absolute top-3 right-3 sm:top-4 sm:right-4 text-[10px] sm:text-xs font-mono px-2 py-1 rounded-md bg-black/40 backdrop-blur">
+              <span
+                className="absolute top-3 right-3 sm:top-4 sm:right-4 text-[10px] sm:text-xs font-mono px-2 py-1 rounded-md bg-black/40 backdrop-blur-sm border"
+                style={{ borderColor: `${color}44` }}
+              >
                 {project.year}
               </span>
             )}

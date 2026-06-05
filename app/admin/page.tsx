@@ -354,7 +354,7 @@ export default function Admin() {
                 >
                   {p.thumbnail ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={p.thumbnail} alt={p.i18n?.name || p.slug} className="w-full h-full object-cover" />
+                    <img src={p.thumbnail} alt={p.i18n?.name || p.slug} className="w-full h-full object-contain p-1" />
                   ) : (
                     <span className="text-[10px] sm:text-xs font-bold" style={{ color: p.color }}>
                       {(p.i18n?.name || p.slug || '?').slice(0, 2).toUpperCase()}
@@ -981,7 +981,7 @@ function LogoUpload({
           <div className="aspect-video rounded-xl border border-white/10 bg-black/40 overflow-hidden flex items-center justify-center">
             {value ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={value} alt="Logo preview" className="w-full h-full object-cover" />
+              <img src={value} alt="Logo preview" className="w-full h-full object-contain p-3" />
             ) : (
               <div className="text-slate-600 text-xs font-mono flex flex-col items-center gap-1">
                 <ImageIcon size={28} />
