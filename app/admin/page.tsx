@@ -38,7 +38,15 @@ function slugify(s: string): string {
 const API_BASE = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/graphql').replace(/\/graphql\/?$/, '');
 
 const ADMIN_DATA = `query {
-  projects(locale: "es", includeHidden: true) {
+  esProjects: projects(locale: "es", includeHidden: true) {
+    id slug order featured color isMobile tech year visible
+    i18n { name tagline description longDescription }
+    repos { type url label isPublic }
+    links { web playStore appStore windows macOS linux msStore }
+    screenshots { url caption }
+    thumbnail
+  }
+  enProjects: projects(locale: "en", includeHidden: true) {
     id slug order featured color isMobile tech year visible
     i18n { name tagline description longDescription }
     repos { type url label isPublic }
@@ -101,6 +109,7 @@ const blank: Form = {
 export default function Admin() {
   const router = useRouter();
   const [list, setList] = useState<any[]>([]);
+  const [enList, setEnList] = useState<any[]>([]);
   const [editing, setEditing] = useState<Form | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -113,7 +122,8 @@ export default function Admin() {
   async function load() {
     try {
       const r: any = await gql().request(ADMIN_DATA);
-      setList(r.projects || []);
+      setList(r.esProjects || []);
+      setEnList(r.enProjects || []);
       setProposals(r.proposals || []);
       setSiteConfig(r.siteConfig || null);
     } catch (e) {
@@ -182,12 +192,13 @@ export default function Admin() {
   }
 
   function startEdit(p: any) {
+    const enProject = enList.find((x: any) => x.id === p.id);
     setEditing({
       id: p.id, slug: p.slug, color: p.color, order: p.order, featured: p.featured,
       visible: p.visible, isMobile: p.isMobile, year: p.year, thumbnail: p.thumbnail,
       tech: (p.tech || []).join(', '),
       nameEs: p.i18n?.name || '', taglineEs: p.i18n?.tagline || '', descEs: p.i18n?.description || '', longEs: p.i18n?.longDescription || '',
-      nameEn: '', taglineEn: '', descEn: '', longEn: '',
+      nameEn: enProject?.i18n?.name || '', taglineEn: enProject?.i18n?.tagline || '', descEn: enProject?.i18n?.description || '', longEn: enProject?.i18n?.longDescription || '',
       web: p.links?.web || '', playStore: p.links?.playStore || '', appStore: p.links?.appStore || '',
       windows: p.links?.windows || '', macOS: p.links?.macOS || '', linux: p.links?.linux || '', msStore: p.links?.msStore || '',
       repos: (p.repos || []).map((r: any) => ({ type: r.type, url: r.url, label: r.label || '', isPublic: r.isPublic })),

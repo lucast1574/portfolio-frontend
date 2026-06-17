@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
+import { detectLocale } from '@/lib/locale';
 
 export const metadata: Metadata = {
   title: 'Lucas Santillan — Portfolio',
@@ -34,8 +35,9 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const locale = detectLocale();
   return (
-    <html lang="en">
+    <html lang={locale}>
       <body>
         <div className="stars" />
         <div className="stars-2" />

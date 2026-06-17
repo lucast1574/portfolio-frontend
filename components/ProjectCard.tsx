@@ -102,11 +102,11 @@ export default function ProjectCard({ project, dict, index }: { project: Project
               className="text-[10px] sm:text-xs font-mono tracking-[0.2em] uppercase"
               style={{ color }}
             >
-              {String(index + 1).padStart(2, '0')} · {project.isMobile ? 'MOBILE' : 'WEB'}
+              {String(index + 1).padStart(2, '0')} · {project.isMobile ? dict.mobile : dict.webType}
             </span>
             {project.featured && (
               <span className="text-[9px] sm:text-[10px] font-mono px-2 py-0.5 rounded border" style={{ borderColor: color, color }}>
-                ★ FEATURED
+                ★ {dict.featured}
               </span>
             )}
           </div>

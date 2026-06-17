@@ -22,6 +22,7 @@ export type Dict = {
   rights: string; scroll: string; connect: string; repos: string;
   web: string; playStore: string; appStore: string;
   available: string; workingOn: string;
+  featured: string; mobile: string; webType: string;
 };
 
 export const messages: { en: Dict; es: Dict } = {
@@ -43,9 +44,12 @@ export const messages: { en: Dict; es: Dict } = {
     appStore: 'App Store',
     available: 'AVAILABLE FOR PROJECTS',
     workingOn: 'CURRENTLY WORKING ON',
+    featured: 'FEATURED',
+    mobile: 'MOBILE',
+    webType: 'WEB',
   },
   es: {
-    role: 'Full Stack Developer',
+    role: 'Desarrollador Full Stack',
     selected: 'Trabajo seleccionado',
     projects: 'Proyectos',
     viewSite: 'Visitar sitio',
@@ -54,7 +58,7 @@ export const messages: { en: Dict; es: Dict } = {
     technologies: 'Stack',
     backToTop: 'Volver arriba',
     rights: '© Lucas Santillan',
-    scroll: 'Scroll',
+    scroll: 'Deslizar',
     connect: 'Contacto',
     repos: 'Repositorios',
     web: 'Sitio web',
@@ -62,6 +66,9 @@ export const messages: { en: Dict; es: Dict } = {
     appStore: 'App Store',
     available: 'DISPONIBLE PARA PROYECTOS',
     workingOn: 'TRABAJANDO EN ESTE MOMENTO',
+    featured: 'DESTACADO',
+    mobile: 'MÓVIL',
+    webType: 'WEB',
   },
 };
 
