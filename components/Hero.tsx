@@ -35,8 +35,11 @@ export default function Hero({ site, dict }: { site: SiteConfig; dict: Dict }) {
         <motion.div className="hero-orb hero-orb-two" animate={reducedMotion ? undefined : { y: [0, 20, 0], rotate: [0, -8, 0] }} transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }} aria-hidden="true" />
 
         <div className="hero-inner">
-          <motion.div className="hero-eyebrow" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55 }}>
-            <span className="status-dot" /> {site.profile.role || dict.role}
+          <motion.div className="hero-topline" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55 }}>
+            <div className="hero-eyebrow">{site.profile.role || dict.role}</div>
+            <div className={`hero-status ${site.workingOn ? 'hero-status-busy' : ''}`}>
+              <span className="status-dot" /> {site.workingOn ? `${dict.workingOn}: ${site.workingOn.title}` : dict.available}
+            </div>
           </motion.div>
 
           <h1 className="hero-title" aria-label={site.profile.name}>

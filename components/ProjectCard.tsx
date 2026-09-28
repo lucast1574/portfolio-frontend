@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, useReducedMotion } from 'framer-motion';
-import { ArrowUpRight, Github, Globe2, Play, Apple } from 'lucide-react';
+import { ArrowUpRight, Github, Globe2, Play, Apple, MonitorDown, Terminal, ShoppingBag } from 'lucide-react';
 import type { CSSProperties } from 'react';
 import type { Project } from '@/lib/types';
 import type { Dict } from '@/lib/locale';
@@ -48,6 +48,18 @@ export default function ProjectCard({ project, dict, index }: { project: Project
           </a>}
           {project.links?.appStore && <a href={project.links.appStore} target="_blank" rel="noreferrer" className="project-link project-link-outline">
             <Apple size={17} /> App Store <ArrowUpRight size={16} />
+          </a>}
+          {project.links?.windows && <a href={project.links.windows} target="_blank" rel="noreferrer" className="project-link project-link-outline">
+            <MonitorDown size={17} /> Windows <ArrowUpRight size={16} />
+          </a>}
+          {project.links?.macOS && <a href={project.links.macOS} target="_blank" rel="noreferrer" className="project-link project-link-outline">
+            <Apple size={17} /> macOS <ArrowUpRight size={16} />
+          </a>}
+          {project.links?.linux && <a href={project.links.linux} target="_blank" rel="noreferrer" className="project-link project-link-outline">
+            <Terminal size={17} /> Linux <ArrowUpRight size={16} />
+          </a>}
+          {project.links?.msStore && <a href={project.links.msStore} target="_blank" rel="noreferrer" className="project-link project-link-outline">
+            <ShoppingBag size={17} /> Microsoft Store <ArrowUpRight size={16} />
           </a>}
           {project.repos?.filter((repo) => repo.isPublic).map((repo) => <a key={repo.url} href={repo.url} target="_blank" rel="noreferrer" className="project-link project-link-outline">
             <Github size={17} /> {repo.label || dict.viewRepo} <ArrowUpRight size={16} />
