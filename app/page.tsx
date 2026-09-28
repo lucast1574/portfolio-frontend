@@ -3,7 +3,6 @@ import { detectLocale, messages, t as tr } from '@/lib/locale';
 import type { Project, SiteConfig } from '@/lib/types';
 import Hero from '@/components/Hero';
 import ProjectCard from '@/components/ProjectCard';
-import ContactForm from '@/components/ContactForm';
 import Footer from '@/components/Footer';
 import Konami from '@/components/Konami';
 
@@ -42,24 +41,21 @@ export default async function Home() {
       <Hero site={site} dict={dict} />
 
       {projects.length > 0 && (
-        <section className="relative z-10 py-12 sm:py-16">
-          <div className="max-w-6xl mx-auto px-5 sm:px-6 mb-6 sm:mb-8 safe-x">
-            <h2 className="text-[10px] sm:text-sm font-mono tracking-[0.3em] text-slate-500 uppercase">
-              ✦ {dict.selected}
-            </h2>
+        <section id="work" className="work-section">
+          <div className="work-header">
+            <div>
+              <span className="section-kicker">02 / {dict.projects}</span>
+              <h2>{dict.selected}<span>.</span></h2>
+            </div>
+            <span className="work-count">({String(projects.length).padStart(2, '0')}) / {new Date().getFullYear()}</span>
           </div>
-          {projects.map((p, i) => (
-            <ProjectCard key={p.id} project={p} dict={dict} index={i} />
-          ))}
+          <div className="project-list">
+            {projects.map((p, i) => <ProjectCard key={p.id} project={p} dict={dict} index={i} />)}
+          </div>
         </section>
       )}
 
-      <ContactForm dict={dict} />
-
-      <Footer dict={dict} />
-
-      {/* Glow en el fin de la página (abajo del todo) */}
-      <div className="absolute -bottom-24 -left-12 sm:-bottom-40 sm:-left-20 w-[280px] h-[280px] sm:w-[500px] sm:h-[500px] rounded-full bg-gradient-to-tr from-blue-500/20 via-cyan-400/5 to-transparent blur-3xl pointer-events-none z-0" />
+      <Footer dict={dict} site={site} />
     </main>
   );
 }

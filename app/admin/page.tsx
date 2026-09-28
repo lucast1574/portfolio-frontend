@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { gql } from '@/lib/gql';
 import { motion } from 'framer-motion';
-import { Plus, Pencil, Trash2, Save, X, LogOut, Rocket, MessageSquare, Check, Ban, Calendar, Globe, Monitor, Apple, Terminal, ShoppingBag, Link, Play, Upload, ImageIcon, AlertTriangle, Loader2 } from 'lucide-react';
+import { Plus, Pencil, Trash2, Save, X, LogOut, Rocket, MessageSquare, Check, Ban, Calendar, Globe, Monitor, Apple, Terminal, ShoppingBag, Link, Play, Upload, ImageIcon, AlertTriangle, Loader2, Mail } from 'lucide-react';
 
 /** Try hard to extract a human-readable message from any error shape
  *  (graphql-request, fetch, plain Error, JSON blobs, etc). */
@@ -486,6 +486,12 @@ export default function Admin() {
                   </div>
 
                   <div className="flex flex-wrap items-center gap-2 pt-1">
+                    <a
+                      href={`mailto:${encodeURIComponent(p.email)}?subject=${encodeURIComponent(`Re: ${p.title}`)}&body=${encodeURIComponent(`Hola ${p.name},\n\n`)}`}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-400 hover:bg-emerald-300 text-slate-950 text-xs font-bold rounded-lg transition"
+                    >
+                      <Mail size={13} /> Responder por correo
+                    </a>
                     {p.status === 'pending' && (
                       <>
                         <button
