@@ -22,7 +22,7 @@ export default function ProjectCard({ project, dict, index }: { project: Project
     >
       <div className="project-visual">
         <div className="project-visual-grid" aria-hidden="true" />
-        <span className="project-visual-index">{String(index + 1).padStart(2, '0')} / {project.year || '—'}</span>
+        <span className="project-visual-index">{String(index + 1).padStart(2, '0')} / {project.year || (project.isMobile ? 'APP' : 'WEB')}</span>
         {project.thumbnail ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img className="project-image" src={project.thumbnail} alt={`${project.i18n.name} logo`} loading="lazy" decoding="async" />
