@@ -10,6 +10,7 @@ export default function ProjectCard({ project, dict, index }: { project: Project
   const reducedMotion = useReducedMotion();
   const color = project.color || '#a9f04d';
   const style = { '--project-accent': color } as CSSProperties;
+  const isGameServerExperiment = project.slug === 'game-server-experiments';
 
   return (
     <motion.article
@@ -22,7 +23,7 @@ export default function ProjectCard({ project, dict, index }: { project: Project
     >
       <div className="project-visual">
         <div className="project-visual-grid" aria-hidden="true" />
-        <span className="project-visual-index">{String(index + 1).padStart(2, '0')} / {project.year || (project.isMobile ? 'APP' : 'WEB')}</span>
+        <span className="project-visual-index">{String(index + 1).padStart(2, '0')} / {project.year || (isGameServerExperiment ? 'LAB' : project.isMobile ? 'APP' : 'WEB')}</span>
         {project.thumbnail ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img className="project-image" src={project.thumbnail} alt={`${project.i18n.name} logo`} loading="lazy" decoding="async" />
@@ -33,7 +34,7 @@ export default function ProjectCard({ project, dict, index }: { project: Project
       </div>
 
       <div className="project-copy">
-        <div className="project-meta"><span className="project-meta-line" />{project.isMobile ? 'APP + WEB' : 'DIGITAL PRODUCT'} <span className="project-meta-separator">/</span> {String(index + 1).padStart(2, '0')}</div>
+        <div className="project-meta"><span className="project-meta-line" />{isGameServerExperiment ? 'OPEN SOURCE EXPERIMENT' : project.isMobile ? 'APP + WEB' : 'DIGITAL PRODUCT'} <span className="project-meta-separator">/</span> {String(index + 1).padStart(2, '0')}</div>
         <h3>{project.i18n.name}</h3>
         {project.i18n.tagline && <p className="project-tagline">{project.i18n.tagline}</p>}
         {project.i18n.description && <p className="project-description">{project.i18n.description}</p>}
