@@ -11,6 +11,7 @@ export default function ProjectCard({ project, dict, index }: { project: Project
   const color = project.color || '#a9f04d';
   const style = { '--project-accent': color } as CSSProperties;
   const isGameServerExperiment = project.slug === 'game-server-experiments';
+  const VisualTag = project.links?.web ? 'a' : 'div';
 
   return (
     <motion.article
@@ -21,7 +22,13 @@ export default function ProjectCard({ project, dict, index }: { project: Project
       viewport={{ once: true, amount: 0.13 }}
       transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
     >
-      <div className="project-visual">
+      <VisualTag
+        className="project-visual"
+        href={project.links?.web || undefined}
+        target={project.links?.web ? '_blank' : undefined}
+        rel={project.links?.web ? 'noopener noreferrer' : undefined}
+        aria-label={project.links?.web ? `${dict.viewSite}: ${project.i18n.name}` : undefined}
+      >
         <div className="project-visual-grid" aria-hidden="true" />
         <span className="project-visual-index">{String(index + 1).padStart(2, '0')} / {project.year || (isGameServerExperiment ? 'LAB' : project.isMobile ? 'APP' : 'WEB')}</span>
         {project.thumbnail ? (
@@ -31,7 +38,7 @@ export default function ProjectCard({ project, dict, index }: { project: Project
           <span className="project-fallback" aria-hidden="true">{project.i18n.name?.slice(0, 2).toUpperCase()}</span>
         )}
         <span className="project-visual-corner" aria-hidden="true"><ArrowUpRight size={25} strokeWidth={1.4} /></span>
-      </div>
+      </VisualTag>
 
       <div className="project-copy">
         <div className="project-meta"><span className="project-meta-line" />{isGameServerExperiment ? 'OPEN SOURCE EXPERIMENT' : project.isMobile ? 'APP + WEB' : 'DIGITAL PRODUCT'} <span className="project-meta-separator">/</span> {String(index + 1).padStart(2, '0')}</div>
