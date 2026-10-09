@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, useReducedMotion, useScroll, useSpring } from 'framer-motion';
-import { ArrowDownRight, ArrowUpRight, Github, Linkedin, Mail, Youtube } from 'lucide-react';
+import { ArrowDownRight, ArrowUpRight, Asterisk, Github, Linkedin, Mail, Youtube } from 'lucide-react';
 import ContactModal from '@/components/ContactModal';
 import { LINKEDIN_URL } from '@/lib/social';
 import type { SiteConfig } from '@/lib/types';
@@ -67,7 +67,7 @@ export default function Hero({ site, dict }: { site: SiteConfig; dict: Dict }) {
       </section>
 
       <div className="ticker" aria-hidden="true"><div className="ticker-track">
-        {Array.from({ length: 4 }, (_, i) => <span key={i}>DESIGN <b>✳</b> BUILD <b>✳</b> SHIP <b>✳</b> REPEAT <b>✳</b> </span>)}
+        {Array.from({ length: 4 }, (_, i) => <span className="ticker-group" key={i}>{['DESIGN', 'BUILD', 'SHIP', 'REPEAT'].map(label => <span className="ticker-item" key={label}>{label}<Asterisk size={22} strokeWidth={2} aria-hidden="true" /></span>)}</span>)}
       </div></div>
 
       <div className="social-rail" aria-label="Social links">

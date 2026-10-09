@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Rocket } from 'lucide-react';
 
 const SEQUENCE = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
 
@@ -50,7 +51,7 @@ export default function Konami() {
   if (!boom) return null;
   return (
     <div className="fixed inset-0 z-[200] pointer-events-none flex items-end justify-center">
-      <div className="text-6xl animate-rocket">🚀</div>
+      <div className="animate-rocket"><Rocket size={60} aria-hidden="true" /></div>
     </div>
   );
 }

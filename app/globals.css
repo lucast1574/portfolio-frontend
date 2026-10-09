@@ -62,7 +62,9 @@ a { outline-offset: 5px; }
 .ticker { position: relative; z-index: 2; overflow: hidden; padding: 17px 0; border-top: 1px solid rgba(255,255,255,.12); border-bottom: 1px solid rgba(255,255,255,.12); background: var(--lime); color: #0b1513; transform: rotate(-1.5deg) scale(1.02); }
 .ticker-track { display: flex; width: max-content; animation: ticker 30s linear infinite; }
 .ticker-track span { white-space: nowrap; font-size: clamp(14px, 1.5vw, 19px); font-weight: 900; letter-spacing: .08em; }
-.ticker-track b { font-size: 24px; margin: 0 24px; vertical-align: -2px; }
+.ticker-group, .ticker-item { display: inline-flex; align-items: center; }
+.ticker-item { gap: 24px; padding-right: 24px; }
+.ticker-item svg { flex-shrink: 0; }
 .social-rail { position: fixed; z-index: 25; left: 16px; bottom: 22px; display: flex; flex-direction: column; gap: 7px; }
 .social-rail a { display: grid; place-items: center; width: 37px; height: 37px; color: #e8f0e8; border: 1px solid rgba(255,255,255,.16); border-radius: 50%; background: #142029b8; backdrop-filter: blur(8px); transition: color .2s, background .2s, transform .2s; }
 .social-rail a:hover { color: #0b1513; background: var(--lime); transform: translateX(3px); }
@@ -172,7 +174,8 @@ a { outline-offset: 5px; }
   .hero-edge-label { display: none; }
   .social-rail { display: none; }
   .ticker { padding: 11px 0; }
-  .ticker-track b { margin: 0 14px; }
+  .ticker-item { gap: 16px; padding-right: 16px; }
+  .ticker-item svg { width: 18px; height: 18px; }
   .work-section { padding: 100px 20px 60px; }
   .work-header { margin-bottom: 55px; }
   .work-header h2 { font-size: clamp(3.4rem, 13vw, 5.4rem); }
@@ -192,4 +195,53 @@ a { outline-offset: 5px; }
 @media (pointer: coarse) { button, a { min-height: 44px; } }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
+}
+
+/* Keep the mobile layout readable without clipping display type or shrinking controls. */
+@media (max-width: 640px) {
+  .site-header { position: relative; gap: 16px; padding: 16px 20px; min-height: 76px; background: #111c25; }
+  .brand-mark { flex-shrink: 0; }
+  .site-nav { min-width: 0; gap: 10px; justify-content: flex-end; }
+  .site-nav > a, .site-nav > button { font-size: 10px; }
+  .site-nav > a { display: inline-flex; align-items: center; max-width: 100px; }
+  .site-nav .nav-contact { min-height: 44px; padding: 10px; white-space: nowrap; }
+  .hero-section { min-height: auto; }
+  .hero-inner { padding: 48px 20px 56px; }
+  .hero-eyebrow, .section-kicker { font-size: 12px; letter-spacing: .14em; }
+  .hero-status { font-size: 11px; line-height: 1.6; letter-spacing: .08em; }
+  .status-dot { flex-shrink: 0; }
+  .hero-title { font-size: clamp(2.65rem, 12.5vw, 5rem); line-height: 1.05; letter-spacing: -.075em; margin: 28px 0; }
+  .hero-title-line { padding-right: .12em; }
+  .hero-bottom { margin-top: 28px; }
+  .hero-intro p { font-size: 16px; line-height: 1.65; }
+  .hero-work-link { margin-top: 26px; min-height: 44px; font-size: 13px; }
+  .hero-orb-one { top: 10%; opacity: .3; }
+  .hero-orb-two { width: 48px; right: 10%; bottom: 9%; opacity: .3; }
+  .ticker { transform: none; padding: 14px 0; }
+  .work-section { padding: 64px 20px 56px; }
+  .work-header { margin-bottom: 36px; }
+  .work-header h2 { font-size: clamp(2.5rem, 11.5vw, 4.5rem); line-height: 1.05; letter-spacing: -.07em; overflow-wrap: normal; }
+  .project-list { gap: 56px; }
+  .project-card { gap: 24px; min-width: 0; }
+  .project-visual { min-height: 0; aspect-ratio: 1.25; }
+  .project-visual-index { top: 18px; left: 18px; }
+  .project-copy { padding: 0; }
+  .project-copy h3 { font-size: clamp(2.25rem, 9.5vw, 3rem); line-height: 1.08; letter-spacing: -.055em; overflow-wrap: normal; }
+  .project-meta { font-size: 12px; letter-spacing: .1em; flex-wrap: wrap; }
+  .project-meta-line { flex-shrink: 0; }
+  .project-description { font-size: 16px; line-height: 1.65; margin-bottom: 20px; }
+  .project-tech { margin-bottom: 24px; }
+  .project-tech span { font-size: 12px; padding: 8px 10px; }
+  .project-link { font-size: 14px; padding: 12px; min-height: 46px; }
+  .project-link svg { flex-shrink: 0; }
+  .contact-section { padding: 64px 20px; }
+  .contact-title { font-size: clamp(2.75rem, 12vw, 4.5rem); line-height: 1.08; letter-spacing: -.065em; }
+  .contact-alternatives { font-size: 14px; gap: 12px 18px; }
+  .contact-alternatives > span { flex-basis: 100%; }
+  .contact-modal-backdrop { padding: 12px; }
+  .contact-modal { max-height: calc(100svh - 24px); padding: 20px; }
+  .contact-modal h2 { font-size: clamp(2rem, 10vw, 3rem); line-height: 1.1; }
+  .contact-form input, .contact-form textarea { font-size: 16px; }
+  .site-footer { padding: 24px 20px; }
+  .site-footer-inner { line-height: 1.6; letter-spacing: .04em; }
 }
