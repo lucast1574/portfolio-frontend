@@ -3,11 +3,15 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowUpRight, Github, Globe2, Play, Apple, MonitorDown, Terminal, ShoppingBag } from 'lucide-react';
 import type { CSSProperties } from 'react';
+import { useState } from 'react';
 import type { Project } from '@/lib/types';
 import type { Dict } from '@/lib/locale';
 
 export default function ProjectCard({ project, dict, index }: { project: Project; dict: Dict; index: number }) {
   const reducedMotion = useReducedMotion();
+  const [failedImages, setFailedImages] = useState<string[]>([]);
+  const bundledLogo = project.slug === 'vidrios-veca' ? '/projects/vidrios-veca.svg' : undefined;
+  const thumbnail = [project.thumbnail, bundledLogo].find((url) => url && !failedImages.includes(url));
   const color = project.color || '#a9f04d';
   const style = { '--project-accent': color } as CSSProperties;
   const isGameServerExperiment = project.slug === 'game-server-experiments';
@@ -31,9 +35,9 @@ export default function ProjectCard({ project, dict, index }: { project: Project
       >
         <div className="project-visual-grid" aria-hidden="true" />
         <span className="project-visual-index">{String(index + 1).padStart(2, '0')} / {project.year || (isGameServerExperiment ? 'LAB' : project.isMobile ? 'APP' : 'WEB')}</span>
-        {project.thumbnail ? (
+        {thumbnail ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img className="project-image" src={project.thumbnail} alt={`${project.i18n.name} logo`} loading="lazy" decoding="async" />
+          <img key={thumbnail} className="project-image" src={thumbnail} alt={`${project.i18n.name} logo`} loading="lazy" decoding="async" onError={() => setFailedImages((failed) => [...failed, thumbnail])} />
         ) : (
           <span className="project-fallback" aria-hidden="true">{project.i18n.name?.slice(0, 2).toUpperCase()}</span>
         )}
