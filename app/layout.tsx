@@ -9,7 +9,7 @@ export const metadata: Metadata = {
  metadataBase: new URL('https://lucas.santillan.pro'),
  verification: { google: '-waQoOzk8ybo0FoBf71Thfw9WLp6WfIWOdgECWaL0nI' },
  robots: {index:false,follow:false},
- icons: {icon:[{url:'/favicon.svg',type:'image/svg+xml'}],shortcut:'/favicon.svg'},
+ icons: { icon: [{ url: '/favicon.svg?v=ls-header-2', type: 'image/svg+xml' }, { url: '/favicon-32.png?v=ls-header-2', type: 'image/png', sizes: '32x32' }], shortcut: '/favicon-32.png?v=ls-header-2', apple: [{ url: '/apple-touch-icon.png?v=ls-header-2', sizes: '180x180', type: 'image/png' }] },
  formatDetection: { telephone:false,email:false,address:false },
 };
 
