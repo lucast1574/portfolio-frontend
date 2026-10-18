@@ -1,29 +1,15 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
+import './portfolio-motion.css';
 import { detectLocale } from '@/lib/locale';
 
 export const metadata: Metadata = {
-  title: 'Lucas Santillan — Portfolio',
-  description: 'Full Stack Developer · Projects, experiments and ventures.',
-  metadataBase: new URL('https://lucas.santillan.pro'),
-  icons: {
-    icon: [{ url: '/favicon.svg', type: 'image/svg+xml' }],
-    shortcut: '/favicon.svg',
-    apple: '/favicon.svg',
-  },
-  openGraph: {
-    title: 'Lucas Santillan — Portfolio',
-    description: 'Full Stack Developer · Projects, experiments and ventures.',
-    url: 'https://lucas.santillan.pro',
-    siteName: 'Lucas Santillan',
-    type: 'website',
-  },
-  twitter: {
-    card: 'summary',
-    title: 'Lucas Santillan — Portfolio',
-    description: 'Full Stack Developer · Projects, experiments and ventures.',
-  },
-  formatDetection: { telephone: false, email: false, address: false },
+ title: 'Lucas Santillan',
+ metadataBase: new URL('https://lucas.santillan.pro'),
+ verification: { google: '-waQoOzk8ybo0FoBf71Thfw9WLp6WfIWOdgECWaL0nI' },
+ robots: {index:false,follow:false},
+ icons: {icon:[{url:'/favicon.svg',type:'image/svg+xml'}],shortcut:'/favicon.svg'},
+ formatDetection: { telephone:false,email:false,address:false },
 };
 
 export const viewport: Viewport = {

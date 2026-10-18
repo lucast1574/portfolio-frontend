@@ -27,7 +27,7 @@ export default function Footer({ dict, site }: { dict: Dict; site: SiteConfig })
         <div className="site-footer-inner">
           <span>{dict.rights} · {new Date().getFullYear()}</span>
           <span>{isSpanish ? 'Diseñado y desarrollado por Lucas' : 'Designed and developed by Lucas'}</span>
-          <button type="button" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}><ArrowUp size={15} /> {dict.backToTop}</button>
+          <button type="button" onClick={() => window.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })}><ArrowUp size={15} /> {dict.backToTop}</button>
         </div>
       </footer>
     </>

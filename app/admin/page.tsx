@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { gql } from '@/lib/gql';
 import { motion } from 'framer-motion';
-import { Plus, Pencil, Trash2, Save, X, LogOut, Rocket, MessageSquare, Check, Ban, Calendar, Globe, Monitor, Apple, Terminal, ShoppingBag, Link, Play, Upload, ImageIcon, AlertTriangle, Loader2, Mail } from 'lucide-react';
+import { Plus, Pencil, Trash2, Save, X, LogOut, Rocket, MessageSquare, Check, Ban, Calendar, Globe, Monitor, Apple, Terminal, ShoppingBag, Link, Play, Upload, ImageIcon, AlertTriangle, Loader2, Mail, Star, Eye, Smartphone } from 'lucide-react';
 
 /** Try hard to extract a human-readable message from any error shape
  *  (graphql-request, fetch, plain Error, JSON blobs, etc). */
@@ -375,7 +375,7 @@ export default function Admin() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-semibold truncate text-sm sm:text-base">{p.i18n?.name || p.slug}</span>
-                    {p.featured && <span className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-amber-400 text-amber-400">★</span>}
+                    {p.featured && <span className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-amber-400 text-amber-400"><Star size={12} aria-hidden="true" /></span>}
                     {!p.visible && <span className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-slate-500 text-slate-400">HIDDEN</span>}
                   </div>
                   <div className="text-[11px] sm:text-xs text-slate-500 font-mono truncate">{p.slug} · order {p.order} {p.year ? `· ${p.year}` : ''}</div>
@@ -599,7 +599,7 @@ export default function Admin() {
                     : 'bg-white/5 border-white/5 text-slate-400 hover:bg-white/10'
                 }`}
               >
-                <span className="text-sm font-bold flex items-center gap-1">★ Destacado</span>
+                <span className="text-sm font-bold flex items-center gap-1"><Star size={15} aria-hidden="true" /> Destacado</span>
                 <span className="text-[10px] opacity-75">Featured</span>
               </button>
               <button
@@ -611,7 +611,7 @@ export default function Admin() {
                     : 'bg-white/5 border-white/5 text-slate-400 hover:bg-white/10'
                 }`}
               >
-                <span className="text-sm font-bold flex items-center gap-1">👁 Visible</span>
+                <span className="text-sm font-bold flex items-center gap-1"><Eye size={15} aria-hidden="true" /> Visible</span>
                 <span className="text-[10px] opacity-75">Público en web</span>
               </button>
               <button
@@ -623,7 +623,7 @@ export default function Admin() {
                     : 'bg-white/5 border-white/5 text-slate-400 hover:bg-white/10'
                 }`}
               >
-                <span className="text-sm font-bold flex items-center gap-1">📱 App Móvil</span>
+                <span className="text-sm font-bold flex items-center gap-1"><Smartphone size={15} aria-hidden="true" /> App Móvil</span>
                 <span className="text-[10px] opacity-75">Mobile App</span>
               </button>
             </div>

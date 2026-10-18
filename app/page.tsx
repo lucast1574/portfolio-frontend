@@ -1,61 +1,6 @@
-import { gql, PROJECTS_QUERY, SITE_QUERY } from '@/lib/gql';
-import { detectLocale, messages, t as tr } from '@/lib/locale';
-import type { Project, SiteConfig } from '@/lib/types';
-import Hero from '@/components/Hero';
-import ProjectCard from '@/components/ProjectCard';
-import Footer from '@/components/Footer';
-import Konami from '@/components/Konami';
-
+import Portfolio from '@/components/Portfolio';
+import { portfolioMetadata } from '@/lib/seo';
 export const dynamic = 'force-dynamic';
 export const revalidate = 60;
-
-async function fetchData(locale: 'es' | 'en'): Promise<{ projects: Project[]; site: SiteConfig }> {
-  const fallback = {
-    projects: [] as Project[],
-    site: {
-      profile: { name: 'Lucas Santillan', role: tr(locale, 'role'), bio: '' },
-      social: { github: 'https://github.com/lucast1574' },
-    } as SiteConfig,
-  };
-  try {
-    const c = gql();
-    const [p, s] = await Promise.all([
-      c.request<{ projects: Project[] }>(PROJECTS_QUERY, { locale }).catch(() => ({ projects: [] })),
-      c.request<{ siteConfig: SiteConfig }>(SITE_QUERY, { locale }).catch(() => ({ siteConfig: fallback.site })),
-    ]);
-    return { projects: p.projects || [], site: s.siteConfig || fallback.site };
-  } catch (e) {
-    console.error('fetchData failed:', (e as any)?.message || e);
-    return fallback;
-  }
-}
-
-export default async function Home() {
-  const locale = detectLocale();
-  const { projects, site } = await fetchData(locale);
-  const dict = messages[locale];
-
-  return (
-    <main className="relative">
-      <Konami />
-      <Hero site={site} dict={dict} />
-
-      {projects.length > 0 && (
-        <section id="work" className="work-section">
-          <div className="work-header">
-            <div>
-              <span className="section-kicker">02 / {dict.projects}</span>
-              <h2>{dict.selected}<span>.</span></h2>
-            </div>
-            <span className="work-count">({String(projects.length).padStart(2, '0')}) / {new Date().getFullYear()}</span>
-          </div>
-          <div className="project-list">
-            {projects.map((p, i) => <ProjectCard key={p.id} project={p} dict={dict} index={i} />)}
-          </div>
-        </section>
-      )}
-
-      <Footer dict={dict} site={site} />
-    </main>
-  );
-}
+export const metadata = portfolioMetadata('es');
+export default function Home() { return <Portfolio locale="es" />; }

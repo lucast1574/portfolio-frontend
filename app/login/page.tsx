@@ -79,7 +79,7 @@ export default function LoginPage() {
           disabled={loading}
           className="w-full py-3 rounded-lg bg-violet-500 hover:bg-violet-400 active:bg-violet-600 transition font-semibold text-slate-900 disabled:opacity-50 text-base"
         >
-          {loading ? 'Launching…' : 'LAUNCH 🚀'}
+          {loading ? 'Launching…' : <>Launch <Rocket size={18} aria-hidden="true" className="inline-block align-middle" /></>}
         </button>
       </motion.form>
     </main>

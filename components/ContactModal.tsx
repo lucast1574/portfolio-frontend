@@ -59,7 +59,7 @@ export default function ContactModal({ dict, site, className, children }: {
 
   return (
     <>
-      <button className={className} type="button" onClick={() => { setStatus('idle'); setOpen(true); }} aria-haspopup="dialog">
+      <button className={className} type="button" onClick={() => { setStatus('idle'); setOpen(true); }} aria-haspopup="dialog" aria-label={className.includes("nav-contact") ? dict.connect : undefined}>
         {children}
       </button>
       <AnimatePresence>

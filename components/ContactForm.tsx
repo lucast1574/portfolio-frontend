@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Send, CheckCircle2, AlertCircle, Sparkles } from 'lucide-react';
 import { gql } from '@/lib/gql';
 import type { Dict } from '@/lib/locale';
 
@@ -56,7 +56,7 @@ export default function ContactForm({ dict }: { dict: Dict }) {
       <div className="max-w-xl mx-auto">
         <div className="text-center mb-8 sm:mb-12">
           <h2 className="text-[10px] sm:text-xs font-mono tracking-[0.3em] text-slate-500 uppercase mb-2">
-            ✦ {dict.connect.toUpperCase()}
+            <Sparkles size={14} className="inline-block align-middle" aria-hidden="true" /> {dict.connect.toUpperCase()}
           </h2>
           <p className="text-2xl sm:text-3xl font-bold text-gradient">
             {isEs ? 'Trabajemos juntos' : "Let's build something"}

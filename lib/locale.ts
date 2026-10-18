@@ -1,15 +1,8 @@
 import { headers } from 'next/headers';
 
 export function detectLocale(): 'es' | 'en' {
-  try {
-    const h = headers();
-    const al = h.get('accept-language') || '';
-    const primary = al.split(',')[0]?.toLowerCase() || '';
-    if (primary.startsWith('es')) return 'es';
-    return 'en';
-  } catch {
-    return 'en';
-  }
+ try { return headers().get('x-portfolio-locale')==='en'?'en':'es'; }
+ catch { return 'es'; }
 }
 
 export const t = (locale: 'es' | 'en', key: keyof typeof messages.en): string => {

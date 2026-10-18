@@ -21,7 +21,7 @@ export default function ProjectCard({ project, dict, index }: { project: Project
     <motion.article
       className={`project-card ${index % 2 ? 'project-card-reverse' : ''}`}
       style={style}
-      initial={reducedMotion ? false : { opacity: 0, y: 70 }}
+      initial={false}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.13 }}
       transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
