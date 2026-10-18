@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import './portfolio-motion.css';
+import './brand-entrance.css';
 import { detectLocale } from '@/lib/locale';
 
 export const metadata: Metadata = {

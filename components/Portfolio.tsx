@@ -1,3 +1,4 @@
+import BrandEntrance from './BrandEntrance';
 import { fetchPortfolio } from '@/lib/portfolio';
 import { messages } from '@/lib/locale';
 import Hero from './Hero';
@@ -17,6 +18,7 @@ export default async function Portfolio({ locale }: { locale: "es" | "en" }) {
     <main className="relative portfolio-motion" lang={locale}>
       <a className="skip-content" href="#about">{locale === "es" ? "Ir al contenido" : "Skip to content"}</a>
       <DocumentLocale locale={locale} />
+      <BrandEntrance locale={locale} />
       <ProfileSchema locale={locale} site={site} projects={projects} />
       <Konami />
       <Hero site={site} dict={dict} />
