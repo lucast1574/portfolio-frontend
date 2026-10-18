@@ -2,8 +2,9 @@
 
 import { useState } from 'react';
 import { motion, useReducedMotion, useScroll, useSpring } from 'framer-motion';
-import { ArrowDownRight, ArrowUpRight, Asterisk, Github, Linkedin, Mail, Youtube, Pause, Play } from 'lucide-react';
+import { ArrowDownRight, ArrowUpRight, Github, Linkedin, Mail, Youtube, Pause, Play } from 'lucide-react';
 import ContactModal from '@/components/ContactModal';
+import PracticeStrip from './PracticeStrip';
 import { LINKEDIN_URL, YOUTUBE_URL } from '@/lib/social';
 import type { SiteConfig } from '@/lib/types';
 import type { Dict } from '@/lib/locale';
@@ -72,9 +73,7 @@ export default function Hero({ site, dict }: { site: SiteConfig; dict: Dict }) {
         <div className="hero-edge-label" aria-hidden="true">PORTFOLIO / {new Date().getFullYear()}</div>
       </section>
 
-      <div className="ticker" aria-hidden="true"><div className="ticker-track">
-        {Array.from({ length: 4 }, (_, i) => <span className="ticker-group" key={i}>{['DESIGN', 'BUILD', 'SHIP', 'REPEAT'].map(label => <span className="ticker-item" key={label}>{label}<Asterisk size={22} strokeWidth={2} aria-hidden="true" /></span>)}</span>)}
-      </div></div>
+      <PracticeStrip english={dict.selected === "Selected work"} />
 
       <div className="social-rail" aria-label="Social links">
         {socials.map(({ href, label, icon: Icon }) => <a key={label} href={href} target={href?.startsWith('mailto:') ? undefined : '_blank'} rel="noreferrer" aria-label={label}><Icon size={17} strokeWidth={1.8} /></a>)}

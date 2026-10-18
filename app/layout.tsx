@@ -24,7 +24,12 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const locale = detectLocale();
   return (
-    <html lang={locale}>
+    <html lang={locale} suppressHydrationWarning>
+      <head>
+        {/* Must run before first paint; deferring this recreates the landing flash. */}
+        {/* eslint-disable-next-line @next/next/no-sync-scripts */}
+        <script src="/brand-arrival.js" data-storage-key="lucas-brand-entrance-v1" data-brand="lucas" data-paths="/,/en" />
+      </head>
       <body>
         <div className="stars" />
         <div className="stars-2" />

@@ -1,6 +1,6 @@
 /* Brief brand introduction; never waits for assets or blocks content. */
 .brand-entrance[hidden]{display:none}
-.brand-entrance{position:fixed;inset:0;z-index:600;display:grid;place-items:center;overflow:clip;pointer-events:none;background:var(--entrance-bg);color:var(--entrance-ink);animation:brand-entrance-exit .5s 1.25s cubic-bezier(.7,0,.3,1) forwards}
+.brand-entrance{position:fixed;inset:0;z-index:600;display: none;place-items:center;overflow:clip;pointer-events:none;background:var(--entrance-bg);color:var(--entrance-ink);animation:brand-entrance-exit .5s 1.25s cubic-bezier(.7,0,.3,1) forwards}
 .brand-entrance-art{position:relative;display:grid;justify-items:center;align-content:center;gap:26px;width:min(84vw,520px);text-align:center}
 .brand-entrance-logo{position:relative;z-index:1;animation:brand-entrance-logo .8s cubic-bezier(.16,1,.3,1) both}
 .brand-entrance-caption{position:relative;z-index:1;font-size:12px;letter-spacing:.04em;margin:0;animation:brand-entrance-copy .6s .25s both}
@@ -15,3 +15,9 @@
 
 .entrance-lucas{--entrance-bg:#080c12;--entrance-ink:#e9efea;--entrance-accent:#c8fa73}.entrance-monogram{width:140px;height:100px;stroke:#c8fa73;stroke-width:5;stroke-linecap:square;stroke-dasharray:250;animation:lucas-monogram-draw 1.1s cubic-bezier(.16,1,.3,1) both}.entrance-lucas .brand-entrance-caption{font-size:22px;font-weight:500;letter-spacing:-.025em}.entrance-lucas .brand-entrance-caption span{display:block;margin-top:12px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#a5b3bb}.entrance-orbit{position:absolute;left:50%;top:50%;translate:-50% -50%;width:min(110vw,480px);stroke:#c8fa73;stroke-width:.7;opacity:.2;animation:lucas-orbit-open 1.4s cubic-bezier(.16,1,.3,1) both}
 @keyframes lucas-monogram-draw{from{stroke-dashoffset:250;opacity:0}to{stroke-dashoffset:0;opacity:1}}@keyframes lucas-orbit-open{from{transform:rotate(-35deg) scale(.65);opacity:0}to{transform:rotate(0) scale(1);opacity:.2}}
+
+/* The head bootstrap covers the very first paint, independently of hydration. */
+html[data-brand-arrival] .brand-entrance { display: grid; }
+html[data-brand-arrival]::before { content: ""; position: fixed; inset: 0; z-index: 599; pointer-events: none; animation: brand-entrance-exit .5s 1.25s cubic-bezier(.7,0,.3,1) forwards; }
+html[data-brand-arrival="lucas"]::before { background: #080c12; }
+@media(prefers-reduced-motion:reduce){html[data-brand-arrival]::before{display:none!important}}
