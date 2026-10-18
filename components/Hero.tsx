@@ -1,17 +1,13 @@
 'use client';
 
-import { useState } from 'react';
-import { motion, useReducedMotion, useScroll, useSpring } from 'framer-motion';
-import { ArrowDownRight, ArrowUpRight, Github, Linkedin, Mail, Youtube, Pause, Play } from 'lucide-react';
-import ContactModal from '@/components/ContactModal';
+import { motion, useScroll, useSpring } from 'framer-motion';
+import { ArrowDownRight, Github, Linkedin, Mail, Youtube } from 'lucide-react';
 import PracticeStrip from './PracticeStrip';
 import { LINKEDIN_URL, YOUTUBE_URL } from '@/lib/social';
 import type { SiteConfig } from '@/lib/types';
 import type { Dict } from '@/lib/locale';
 
 export default function Hero({ site, dict }: { site: SiteConfig; dict: Dict }) {
-  const reducedMotion = useReducedMotion();
-  const [paused, setPaused] = useState(false);
   const { scrollYProgress } = useScroll();
   const progress = useSpring(scrollYProgress, { stiffness: 140, damping: 30, restDelta: 0.001 });
   const socials = [
@@ -24,18 +20,8 @@ export default function Hero({ site, dict }: { site: SiteConfig; dict: Dict }) {
   return (
     <>
       <motion.div className="scroll-progress" style={{ scaleX: progress }} aria-hidden="true" />
-      <header className="site-header">
-        <a href="#top" className="brand-mark" aria-label="Lucas Santillan, top of page">LS<span>.</span></a>
-        <nav className="site-nav" aria-label="Main navigation">
-          <div className="language-switch" aria-label="Idioma / Language"><a href="/" lang="es" hrefLang="es" aria-current={dict.selected==='Trabajo seleccionado'?'page':undefined}>ES</a><a href="/en" lang="en" hrefLang="en" aria-current={dict.selected==='Selected work'?'page':undefined}>EN</a></div>
-          <button type="button" className="motion-toggle" disabled={Boolean(reducedMotion)} aria-pressed={paused} aria-label={dict.selected==='Trabajo seleccionado'?(paused?'Activar animaciones':'Pausar animaciones'):(paused?'Play animations':'Pause animations')} title={dict.selected==='Trabajo seleccionado'?(paused?'Activar animaciones':'Pausar animaciones'):(paused?'Play animations':'Pause animations')} onClick={event=>{const next=!paused;setPaused(next);const root=event.currentTarget.closest('main');if(root)root.dataset.motion=next?'paused':'full';}}>{paused||reducedMotion?<Play size={15} aria-hidden="true"/>:<Pause size={15} aria-hidden="true"/>}</button>
-          <a href="#work">{dict.selected}</a>
-          <a href="#youtube">YouTube</a>
-          <ContactModal dict={dict} site={site} className="nav-contact"><span className="nav-contact-text">{dict.connect}</span> <ArrowUpRight size={15} /></ContactModal>
-        </nav>
-      </header>
-
       <section id="top" className="hero-section">
+        <a href="#top" className="brand-mark hero-signature" aria-label="Lucas Santillan">LS<span>.</span></a>
         <div className="hero-grid" aria-hidden="true" />
         <div className="orbital-path" aria-hidden="true"><span className="orbital-satellite" /><span className="orbital-crosshair" /></div>
         <div className="hero-orb hero-orb-one" aria-hidden="true" />
