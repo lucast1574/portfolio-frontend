@@ -4,3 +4,4 @@ Disallow: /admin
 Disallow: /login
 
 Sitemap: https://lucas.santillan.pro/sitemap.xml
+Sitemap: https://lucas.santillan.pro/image-sitemap.xml
