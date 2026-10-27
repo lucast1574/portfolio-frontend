@@ -4,9 +4,9 @@
   if (!script) return;
   var key = script.getAttribute("data-storage-key");
   var brand = script.getAttribute("data-brand");
-  var paths = (script.getAttribute("data-paths") || "/").split(",");
+  var path = script.getAttribute("data-path") || "/";
   var preference = matchMedia("(prefers-reduced-motion: reduce)");
-  if (!key || !brand || paths.indexOf(location.pathname) < 0 || location.hash || preference.matches) return;
+  if (!key || !brand || location.pathname !== path || location.hash || preference.matches) return;
   try {
     if (sessionStorage.getItem(key)) return;
     sessionStorage.setItem(key, "seen");

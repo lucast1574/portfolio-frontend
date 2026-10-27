@@ -28,7 +28,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         {/* Must run before first paint; deferring this recreates the landing flash. */}
         {/* eslint-disable-next-line @next/next/no-sync-scripts */}
-        <script src="/brand-arrival.js" data-storage-key="lucas-brand-entrance-v1" data-brand="lucas" data-paths="/,/en" />
+        <script src="/brand-arrival.js?v=single-path-1" data-storage-key="lucas-brand-entrance-v1" data-brand="lucas" data-path={locale === "es" ? "/" : "/en"} />
       </head>
       <body>
         <div className="stars" />
