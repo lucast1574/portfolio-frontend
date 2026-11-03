@@ -98,6 +98,12 @@ a { outline-offset: 5px; }
 .project-store-platform { font-size: 10px; font-weight: 400; color: var(--muted); }
 .project-store-link:hover, .project-store-link:focus-visible { background: color-mix(in srgb, var(--project-accent) 12%, var(--panel)); border-color: var(--project-readable-accent, var(--project-accent)); }
 .project-store-link:focus-visible { outline: none; color: var(--project-readable-accent, var(--text)); }
+.project-links:empty { display: none; }
+.project-repos { display: flex; flex-wrap: wrap; gap: 2px 18px; margin-top: 16px; }
+.project-repo-link { display: inline-flex; align-items: center; gap: 7px; min-height: 36px; color: var(--muted); font-size: 12px; text-decoration: none; transition: color .2s, background .2s; }
+.project-repo-link svg { flex-shrink: 0; }
+.project-repo-link:hover, .project-repo-link:focus-visible { outline: none; color: var(--project-readable-accent, var(--text)); text-decoration: underline; text-underline-offset: 4px; }
+@media (pointer: coarse) { .project-repo-link { min-height: 44px; } }
 
 .contact-section { padding: clamp(100px, 13vw, 180px) clamp(22px, 7vw, 120px); border-top: 1px solid var(--line); background: radial-gradient(circle at 70% 55%, rgba(177,247,116,.12), transparent 34%), #0d151b; }
 .contact-inner { max-width: 1500px; margin: auto; }

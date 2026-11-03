@@ -16,6 +16,7 @@ export default function ProjectCard({ project, dict, index }: { project: Project
   const color = project.color || '#a9f04d';
   const style = { '--project-accent': color } as CSSProperties;
   const isGameServerExperiment = project.slug === 'game-server-experiments';
+  const publicRepos = project.repos?.filter((repo) => repo.isPublic) || [];
   const VisualTag = project.links?.web ? 'a' : 'div';
 
   return (
@@ -70,10 +71,12 @@ export default function ProjectCard({ project, dict, index }: { project: Project
           {project.links?.msStore && <a href={project.links.msStore} target="_blank" rel="noreferrer" className="project-link project-link-outline">
             <ShoppingBag size={17} /> Microsoft Store <ArrowUpRight size={16} />
           </a>}
-          {project.repos?.filter((repo) => repo.isPublic).map((repo) => <a key={repo.url} href={repo.url} target="_blank" rel="noreferrer" className="project-link project-link-outline">
-            <Github size={17} /> {repo.label || dict.viewRepo} <ArrowUpRight size={16} />
-          </a>)}
         </div>
+        {publicRepos.length > 0 && <div className="project-repos" role="group" aria-label={dict.repos}>
+          {publicRepos.map((repo) => <a key={repo.url} href={repo.url} target="_blank" rel="noopener noreferrer" className="project-repo-link">
+            <Github size={14} aria-hidden="true" /> {repo.label || dict.viewRepo} <ArrowUpRight size={12} aria-hidden="true" />
+          </a>)}
+        </div>}
       </div>
     </motion.article>
   );
