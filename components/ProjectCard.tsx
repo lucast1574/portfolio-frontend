@@ -1,7 +1,8 @@
 'use client';
 
 import { motion, useReducedMotion } from 'framer-motion';
-import { ArrowUpRight, Github, Globe2, Play, Apple, MonitorDown, Terminal, ShoppingBag } from 'lucide-react';
+import { ArrowUpRight, Github, Globe2, Apple, MonitorDown, Terminal, ShoppingBag } from 'lucide-react';
+import StoreLink from '@/components/StoreLink';
 import type { CSSProperties } from 'react';
 import { useState } from 'react';
 import type { Project } from '@/lib/types';
@@ -55,12 +56,8 @@ export default function ProjectCard({ project, dict, index }: { project: Project
           {project.links?.web && <a href={project.links.web} target="_blank" rel="noreferrer" className="project-link project-link-primary">
             <Globe2 size={17} /> {project.slug === 'leasy-ops' ? 'Backoffice' : dict.viewSite} <ArrowUpRight size={16} />
           </a>}
-          {project.links?.playStore && <a href={project.links.playStore} target="_blank" rel="noreferrer" className="project-link project-link-outline">
-            <Play size={17} fill="currentColor" /> Google Play <ArrowUpRight size={16} />
-          </a>}
-          {project.links?.appStore && <a href={project.links.appStore} target="_blank" rel="noreferrer" className="project-link project-link-outline">
-            <Apple size={17} /> App Store <ArrowUpRight size={16} />
-          </a>}
+          {project.links?.playStore && <StoreLink href={project.links.playStore} platform="android" />}
+          {project.links?.appStore && <StoreLink href={project.links.appStore} platform="ios" />}
           {project.links?.windows && <a href={project.links.windows} target="_blank" rel="noreferrer" className="project-link project-link-outline">
             <MonitorDown size={17} /> Windows <ArrowUpRight size={16} />
           </a>}
